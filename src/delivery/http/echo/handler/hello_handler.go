@@ -10,9 +10,9 @@ type helloHandler struct {
 	helloUseCase domain.HelloUseCase
 }
 
-func NewHelloHandler(h domain.HelloUseCase) domain.HelloHandler {
+func NewHelloHandler(helloUseCase domain.HelloUseCase) domain.HelloHandler {
 	newHelloHandler := helloHandler{
-		helloUseCase: h,
+		helloUseCase: helloUseCase,
 	}
 
 	return &newHelloHandler

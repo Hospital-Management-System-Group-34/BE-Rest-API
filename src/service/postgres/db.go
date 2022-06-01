@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/entity"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -31,5 +32,8 @@ func Connect() *gorm.DB {
 func InitMigration() {
 	db := Connect()
 
-	db.AutoMigrate()
+	db.AutoMigrate(
+		&entity.Staff{},
+		&entity.Authentication{},
+	)
 }
