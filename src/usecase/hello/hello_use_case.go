@@ -1,4 +1,4 @@
-package usecase
+package hello
 
 import (
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/domain"
