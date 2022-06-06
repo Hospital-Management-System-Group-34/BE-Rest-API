@@ -13,6 +13,7 @@ func CreateServer() *echo.Echo {
 	routes.HelloRoutes(e)
 	routes.StaffRoutes(e)
 	routes.AuthenticationRoutes(e)
+	routes.DoctorRoutes(e)
 
 	validator.NewValidator(e)
 
