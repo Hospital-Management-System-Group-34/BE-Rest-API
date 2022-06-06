@@ -35,5 +35,6 @@ func InitMigration() {
 	db.AutoMigrate(
 		&entity.Staff{},
 		&entity.Authentication{},
+		&entity.Doctor{},
 	)
 }
