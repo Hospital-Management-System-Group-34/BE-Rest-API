@@ -43,7 +43,7 @@ func (r *patientRepository) GetPatientByID(id uint) (entity.Patient, int, error)
 	result := r.db.Where("id = ?", id).First(&Patient)
 
 	if result.RowsAffected == 0 {
-		return entity.Patient{}, http.StatusNotFound, fmt.Errorf("Patient not found")
+		return entity.Patient{}, http.StatusNotFound, fmt.Errorf("patient not found")
 	}
 
 	return Patient, http.StatusOK, nil
@@ -58,7 +58,7 @@ func (r *patientRepository) UpdatePatientByID(payload entity.UpdatePatientPayloa
 	Patient.FName = payload.FName
 	Patient.LName = payload.LName
 	Patient.Phone = payload.Phone
-	Patient.Keluhan = payload.Keluhan
+	Patient.Complaint = payload.Complaint
 
 	result := r.db.Save(&Patient)
 
@@ -73,7 +73,7 @@ func (r *patientRepository) DeletePatientByID(id uint) (int, error) {
 	result := r.db.Where("id = ?", id).Delete(&entity.Patient{})
 
 	if result.RowsAffected == 0 {
-		return http.StatusNotFound, fmt.Errorf("Patient not found")
+		return http.StatusNotFound, fmt.Errorf("patient not found")
 	}
 
 	return http.StatusOK, nil

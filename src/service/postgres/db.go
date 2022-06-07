@@ -37,5 +37,6 @@ func InitMigration() {
 		&entity.Authentication{},
 		&entity.Doctor{},
 		&entity.Patient{},
+		&entity.Clinic{},
 	)
 }

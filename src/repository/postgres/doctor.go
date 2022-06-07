@@ -58,6 +58,7 @@ func (r *doctorRepository) UpdateDoctorByID(payload entity.UpdateDoctorPayload) 
 	doctor.FName = payload.FName
 	doctor.LName = payload.LName
 	doctor.Phone = payload.Phone
+	doctor.ClinicID = payload.ClinicID
 
 	result := r.db.Save(&doctor)
 
