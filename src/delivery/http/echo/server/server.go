@@ -17,6 +17,7 @@ func CreateServer() *echo.Echo {
 	routes.ClinicRoutes(e)
 	routes.DoctorRoutes(e)
 	routes.ScheduleRoutes(e)
+	routes.SessionRoutes(e)
 
 	validator.NewValidator(e)
 

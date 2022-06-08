@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -46,9 +47,11 @@ func (h *doctorHandler) PostDoctorHandler(c echo.Context) error {
 	}
 
 	requestAuthorizationHeader := c.Request().Header["Authorization"][0]
+	fmt.Println("uhuy", requestAuthorizationHeader)
 	authorizationHeader := entity.AuthorizationHeader{
 		AccessToken: strings.Split(requestAuthorizationHeader, " ")[1],
 	}
+	fmt.Println("uhuy2", authorizationHeader)
 
 	code, err := h.addDoctorUseCase.Execute(payload, authorizationHeader)
 	if err != nil {
