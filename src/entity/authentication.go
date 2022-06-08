@@ -5,7 +5,7 @@ type Authentication struct {
 }
 
 type RefreshTokenPayload struct {
-	RefreshToken string `json:"refreshToken" validate:"required,jwt"`
+	RefreshToken string `json:"refreshToken" validate:"required"`
 }
 
 type NewLogin struct {
