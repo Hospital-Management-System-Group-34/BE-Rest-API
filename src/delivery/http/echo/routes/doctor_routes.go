@@ -13,11 +13,12 @@ import (
 func DoctorRoutes(e *echo.Echo) {
 	postgresDB := postgres.Connect()
 	doctorRepository := repository.NewDoctorRepository(postgresDB)
+	clinicRepository := repository.NewClinicRepository(postgresDB)
 
-	addDoctorUseCase := doctor.NewAddDoctorUseCase(doctorRepository)
+	addDoctorUseCase := doctor.NewAddDoctorUseCase(doctorRepository, clinicRepository)
 	getDoctorsUseCase := doctor.NewGetDoctorsUseCase(doctorRepository)
 	getDoctorByIDUseCase := doctor.NewGetDoctorByIDUseCase(doctorRepository)
-	updateDoctorByIDUseCase := doctor.NewUpdateDoctorByIDUseCase(doctorRepository)
+	updateDoctorByIDUseCase := doctor.NewUpdateDoctorByIDUseCase(doctorRepository, clinicRepository)
 	deleteDoctorByIDUseCase := doctor.NewDeleteDoctorByIDUseCase(doctorRepository)
 
 	doctorHandler := handler.NewDoctorHandler(

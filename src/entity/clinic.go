@@ -8,7 +8,7 @@ type Clinic struct {
 }
 
 type UpdateClinicPayload struct {
-	ID   uint   `param:"ClinicID" validate:"required,number,gt=0"`
+	ID   uint   `param:"clinicID" validate:"required,number,gt=0"`
 	Name string `json:"name" validate:"required"`
 }
 
