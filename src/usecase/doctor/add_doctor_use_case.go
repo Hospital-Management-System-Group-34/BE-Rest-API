@@ -25,6 +25,8 @@ func NewAddDoctorUseCase(
 	return &addDoctorUseCase{
 		doctorRepository: doctorRepository,
 		clinicRepository: clinicRepository,
+		jwtTokenManager:  jwtTokenManager,
+		staffRepository:  staffRepository,
 	}
 }
 
@@ -32,10 +34,12 @@ func (u *addDoctorUseCase) Execute(
 	payload entity.Doctor,
 	authorizationHeader entity.AuthorizationHeader,
 ) (int, error) {
+	fmt.Println("uhuhuhuhuy", authorizationHeader)
 	decodedPayload, code, err := u.jwtTokenManager.DecodeAccessTokenPayload(authorizationHeader.AccessToken)
 	if err != nil {
 		return code, err
 	}
+	fmt.Println("uhuhuhuhuy", decodedPayload)
 
 	staff, code, err := u.staffRepository.GetStaffByID(decodedPayload.ID)
 	if err != nil {

@@ -20,7 +20,7 @@ func PatientRoutes(e *echo.Echo) {
 	updatePatientByIDUseCase := patient.NewUpdatePatientByIDUseCase(PatientRepository)
 	deletePatientByIDUseCase := patient.NewDeletePatientByIDUseCase(PatientRepository)
 
-	PatientHandler := handler.NewPatientHandler(
+	patientHandler := handler.NewPatientHandler(
 		addPatientUseCase,
 		getPatientsUseCase,
 		getPatientByIDUseCase,
@@ -28,9 +28,9 @@ func PatientRoutes(e *echo.Echo) {
 		deletePatientByIDUseCase,
 	)
 
-	e.POST("/patients", PatientHandler.PostPatientHandler, middleware.JWTMiddleware())
-	e.GET("/patients", PatientHandler.GetPatientsHandler, middleware.JWTMiddleware())
-	e.GET("/patients/:patientID", PatientHandler.GetPatientByIDHandler, middleware.JWTMiddleware())
-	e.PUT("/patients/:patientID", PatientHandler.PutPatientByIDHandler, middleware.JWTMiddleware())
-	e.DELETE("/patients/:patientID", PatientHandler.DeletePatientByIDHandler, middleware.JWTMiddleware())
+	e.POST("/patients", patientHandler.PostPatientHandler, middleware.JWTMiddleware())
+	e.GET("/patients", patientHandler.GetPatientsHandler, middleware.JWTMiddleware())
+	e.GET("/patients/:patientID", patientHandler.GetPatientByIDHandler, middleware.JWTMiddleware())
+	e.PUT("/patients/:patientID", patientHandler.PutPatientByIDHandler, middleware.JWTMiddleware())
+	e.DELETE("/patients/:patientID", patientHandler.DeletePatientByIDHandler, middleware.JWTMiddleware())
 }

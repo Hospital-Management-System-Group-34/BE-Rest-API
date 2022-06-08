@@ -32,13 +32,13 @@ func AuthenticationRoutes(e *echo.Echo) {
 		authenticationRepository,
 	)
 
-	staffHandler := handler.NewAuthenticationHandler(
+	authenticationHandler := handler.NewAuthenticationHandler(
 		staffLoginUseCase,
 		staffLogoutUsecase,
 		updateAuthenticationUseCase,
 	)
 
-	e.POST("/login", staffHandler.PostStaffLoginHandler)
-	e.POST("/logout", staffHandler.PostStaffLogoutHandler, middleware.JWTMiddleware())
-	e.PUT("/authentications", staffHandler.PutAuthenticationHandler)
+	e.POST("/login", authenticationHandler.PostStaffLoginHandler)
+	e.POST("/logout", authenticationHandler.PostStaffLogoutHandler, middleware.JWTMiddleware())
+	e.PUT("/authentications", authenticationHandler.PutAuthenticationHandler)
 }
