@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/domain"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/entity"
@@ -44,7 +45,12 @@ func (h *doctorHandler) PostDoctorHandler(c echo.Context) error {
 		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
-	code, err := h.addDoctorUseCase.Execute(payload)
+	requestAuthorizationHeader := c.Request().Header["Authorization"][0]
+	authorizationHeader := entity.AuthorizationHeader{
+		AccessToken: strings.Split(requestAuthorizationHeader, " ")[1],
+	}
+
+	code, err := h.addDoctorUseCase.Execute(payload, authorizationHeader)
 	if err != nil {
 		if code != http.StatusInternalServerError {
 			return c.JSON(util.ClientErrorResponse(code, err.Error()))
@@ -104,7 +110,12 @@ func (h *doctorHandler) PutDoctorByIDHandler(c echo.Context) error {
 		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
-	code, err := h.updateDoctorByIDUseCase.Execute(payload)
+	requestAuthorizationHeader := c.Request().Header["Authorization"][0]
+	authorizationHeader := entity.AuthorizationHeader{
+		AccessToken: strings.Split(requestAuthorizationHeader, " ")[1],
+	}
+
+	code, err := h.updateDoctorByIDUseCase.Execute(payload, authorizationHeader)
 	if err != nil {
 		if code != http.StatusInternalServerError {
 			return c.JSON(util.ClientErrorResponse(code, err.Error()))
@@ -127,7 +138,12 @@ func (h *doctorHandler) DeleteDoctorByIDHandler(c echo.Context) error {
 		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
-	code, err := h.deleteDoctorByIDUseCase.Execute(payload.ID)
+	requestAuthorizationHeader := c.Request().Header["Authorization"][0]
+	authorizationHeader := entity.AuthorizationHeader{
+		AccessToken: strings.Split(requestAuthorizationHeader, " ")[1],
+	}
+
+	code, err := h.deleteDoctorByIDUseCase.Execute(payload.ID, authorizationHeader)
 	if err != nil {
 		if code != http.StatusInternalServerError {
 			return c.JSON(util.ClientErrorResponse(code, err.Error()))

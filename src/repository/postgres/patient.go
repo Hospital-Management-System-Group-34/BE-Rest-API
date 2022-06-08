@@ -14,11 +14,9 @@ type patientRepository struct {
 }
 
 func NewPatientRepository(db *gorm.DB) domain.PatientRepository {
-	newPatientRepository := patientRepository{
+	return &patientRepository{
 		db: db,
 	}
-
-	return &newPatientRepository
 }
 
 func (r *patientRepository) AddPatient(payload entity.Patient) (int, error) {

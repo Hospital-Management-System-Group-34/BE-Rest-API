@@ -16,3 +16,7 @@ type NewLogin struct {
 type NewAccessToken struct {
 	AccessToken string `json:"accessToken"`
 }
+
+type AuthorizationHeader struct {
+	AccessToken string
+}

@@ -10,11 +10,9 @@ type staffLogoutUseCase struct {
 }
 
 func NewStaffLogoutUseCase(authenticationRepository domain.AuthenticationRepository) domain.StaffLogoutUseCase {
-	newStaffLogoutUseCase := staffLogoutUseCase{
+	return &staffLogoutUseCase{
 		authenticationRepository: authenticationRepository,
 	}
-
-	return &newStaffLogoutUseCase
 }
 
 func (u *staffLogoutUseCase) Execute(payload entity.RefreshTokenPayload) (int, error) {

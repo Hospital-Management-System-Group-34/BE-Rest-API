@@ -9,9 +9,7 @@ type helloUseCase struct {
 }
 
 func NewHelloUseCase() domain.HelloUseCase {
-	newHelloUseCase := helloUseCase{}
-
-	return &newHelloUseCase
+	return &helloUseCase{}
 }
 
 func (u *helloUseCase) Execute() entity.Hello {

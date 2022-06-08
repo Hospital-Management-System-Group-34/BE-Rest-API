@@ -14,11 +14,9 @@ type scheduleRepository struct {
 }
 
 func NewScheduleRepository(db *gorm.DB) domain.ScheduleRepository {
-	newScheduleRepository := scheduleRepository{
+	return &scheduleRepository{
 		db: db,
 	}
-
-	return &newScheduleRepository
 }
 
 func (r *scheduleRepository) AddSchedule(payload entity.Schedule) (int, error) {

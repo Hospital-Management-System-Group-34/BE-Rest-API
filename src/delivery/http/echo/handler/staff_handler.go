@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/domain"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/entity"
@@ -16,11 +17,9 @@ type staffHandler struct {
 }
 
 func NewStaffHandler(addStaffUseCase domain.AddStaffUseCase) domain.StaffHandler {
-	newStaffHandler := staffHandler{
+	return &staffHandler{
 		addStaffUseCase: addStaffUseCase,
 	}
-
-	return &newStaffHandler
 }
 
 func (h *staffHandler) PostStaffHandler(c echo.Context) error {
@@ -33,7 +32,12 @@ func (h *staffHandler) PostStaffHandler(c echo.Context) error {
 		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
-	code, err := h.addStaffUseCase.Execute(payload)
+	requestAuthorizationHeader := c.Request().Header["Authorization"][0]
+	authorizationHeader := entity.AuthorizationHeader{
+		AccessToken: strings.Split(requestAuthorizationHeader, " ")[1],
+	}
+
+	code, err := h.addStaffUseCase.Execute(payload, authorizationHeader)
 	if err != nil {
 		if code != http.StatusInternalServerError {
 			return c.JSON(util.ClientErrorResponse(code, err.Error()))

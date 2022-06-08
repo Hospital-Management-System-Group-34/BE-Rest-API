@@ -21,13 +21,11 @@ func NewAuthenticationHandler(
 	staffLogoutUseCase domain.StaffLogoutUseCase,
 	updateAuthenticatinoUseCase domain.UpdateAuthenticationUseCase,
 ) domain.AuthenticationHandler {
-	newAuthenticationHandler := authenticationHandler{
+	return &authenticationHandler{
 		staffLoginUseCase:           staffLoginUseCase,
 		staffLogoutUseCase:          staffLogoutUseCase,
 		updateAuthenticationUseCase: updateAuthenticatinoUseCase,
 	}
-
-	return &newAuthenticationHandler
 }
 
 func (h *authenticationHandler) PostStaffLoginHandler(c echo.Context) error {

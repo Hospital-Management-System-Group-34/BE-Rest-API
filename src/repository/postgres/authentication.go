@@ -14,11 +14,9 @@ type authenticationRepository struct {
 }
 
 func NewAuthenticationRepository(db *gorm.DB) domain.AuthenticationRepository {
-	newAuthentication := authenticationRepository{
+	return &authenticationRepository{
 		db: db,
 	}
-
-	return &newAuthentication
 }
 
 func (r *authenticationRepository) AddRefreshToken(payload entity.Authentication) (int, error) {
