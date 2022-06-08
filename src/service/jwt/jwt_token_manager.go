@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -14,47 +15,65 @@ type jwtTokenManager struct {
 }
 
 func NewJWTTokenManager() application.TokenManager {
-	newJWTTokenManager := jwtTokenManager{}
-
-	return &newJWTTokenManager
+	return &jwtTokenManager{}
 }
 
-func (j *jwtTokenManager) GenerateRefreshToken(payload entity.AuthenticationPayload) string {
+func (j *jwtTokenManager) GenerateRefreshToken(payload entity.AuthenticationPayload) (string, int, error) {
 	refreshTokenAge, _ := time.ParseDuration(os.Getenv(("REFRESH_TOKEN_AGE")))
 	refreshTokenSecretKey := os.Getenv("REFRESH_TOKEN_KEY")
 
-	return j.generateToken(payload.ID, refreshTokenAge, refreshTokenSecretKey)
+	token, err := j.generateToken(payload.ID, refreshTokenAge, refreshTokenSecretKey)
+	if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
+
+	return token, http.StatusOK, nil
 }
 
-func (j *jwtTokenManager) GenerateAccessToken(payload entity.AuthenticationPayload) string {
+func (j *jwtTokenManager) GenerateAccessToken(payload entity.AuthenticationPayload) (string, int, error) {
 	accessTokenAge, _ := time.ParseDuration(os.Getenv(("ACCESS_TOKEN_AGE")))
 	accessTokenSecretKey := os.Getenv("ACCESS_TOKEN_KEY")
 
-	return j.generateToken(payload.ID, accessTokenAge, accessTokenSecretKey)
+	token, err := j.generateToken(payload.ID, accessTokenAge, accessTokenSecretKey)
+	if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
+
+	return token, http.StatusOK, nil
 }
 
-func (j *jwtTokenManager) VerifyRefreshToken(refreshToken string) error {
+func (j *jwtTokenManager) VerifyRefreshToken(refreshToken string) (int, error) {
 	claims := jwt.MapClaims{}
 	_, err := jwt.ParseWithClaims(refreshToken, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("REFRESH_TOKEN_KEY")), nil
 	})
 	if err != nil {
-		return fmt.Errorf("invalid refresh token")
+		return http.StatusBadRequest, fmt.Errorf("invalid refresh token")
 	}
 
-	return nil
+	return http.StatusOK, nil
 }
 
 func (j *jwtTokenManager) DecodeRefreshTokenPayload(refreshToken string) (
-	entity.AuthenticationPayload, error,
+	entity.AuthenticationPayload, int, error,
 ) {
-	return j.decodePayload(refreshToken, os.Getenv("REFRESH_TOKEN_KEY"))
+	decodedPayload, err := j.decodePayload(refreshToken, os.Getenv("REFRESH_TOKEN_KEY"))
+	if err != nil {
+		return entity.AuthenticationPayload{}, http.StatusInternalServerError, err
+	}
+
+	return decodedPayload, http.StatusOK, nil
 }
 
 func (j *jwtTokenManager) DecodeAccessTokenPayload(accessToken string) (
-	entity.AuthenticationPayload, error,
+	entity.AuthenticationPayload, int, error,
 ) {
-	return j.decodePayload(accessToken, os.Getenv("ACCESS_TOKEN_KEY"))
+	decodedPayload, err := j.decodePayload(accessToken, os.Getenv("ACCESS_TOKEN_KEY"))
+	if err != nil {
+		return entity.AuthenticationPayload{}, http.StatusInternalServerError, err
+	}
+
+	return decodedPayload, http.StatusOK, nil
 }
 
 func (j *jwtTokenManager) decodePayload(token string, secretKey string) (
@@ -75,7 +94,7 @@ func (j *jwtTokenManager) decodePayload(token string, secretKey string) (
 	return authenticationPayload, nil
 }
 
-func (j *jwtTokenManager) generateToken(id uint, expirationTime time.Duration, secretKey string) string {
+func (j *jwtTokenManager) generateToken(id uint, expirationTime time.Duration, secretKey string) (string, error) {
 	claims := &Claims{
 		ID: id,
 		StandardClaims: jwt.StandardClaims{
@@ -84,7 +103,7 @@ func (j *jwtTokenManager) generateToken(id uint, expirationTime time.Duration, s
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, _ := token.SignedString([]byte(secretKey))
+	tokenString, err := token.SignedString([]byte(secretKey))
 
-	return tokenString
+	return tokenString, err
 }

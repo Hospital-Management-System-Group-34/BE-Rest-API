@@ -7,6 +7,7 @@ import (
 
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/delivery/http/echo/server"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/service/postgres"
+	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/util"
 
 	"github.com/joho/godotenv"
 )
@@ -21,6 +22,7 @@ func init() {
 	}
 
 	postgres.InitMigration()
+	util.CreateAdminStaff()
 }
 
 func main() {

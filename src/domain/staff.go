@@ -13,8 +13,9 @@ type StaffRepository interface {
 	AddStaff(payload entity.Staff) (int, error)
 	GetStaffByEmail(email string) (entity.Staff, int, error)
 	VerifyEmailAvailable(email string) (int, error)
+	GetStaffByID(id uint) (entity.Staff, int, error)
 }
 
 type AddStaffUseCase interface {
-	Execute(payload entity.Staff) (int, error)
+	Execute(payload entity.Staff, authorizationHeader entity.AuthorizationHeader) (int, error)
 }

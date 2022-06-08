@@ -11,11 +11,9 @@ type helloHandler struct {
 }
 
 func NewHelloHandler(helloUseCase domain.HelloUseCase) domain.HelloHandler {
-	newHelloHandler := helloHandler{
+	return &helloHandler{
 		helloUseCase: helloUseCase,
 	}
-
-	return &newHelloHandler
 }
 
 func (h *helloHandler) GetHelloHandler(c echo.Context) error {

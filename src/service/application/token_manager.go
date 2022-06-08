@@ -5,9 +5,9 @@ import (
 )
 
 type TokenManager interface {
-	GenerateRefreshToken(payload entity.AuthenticationPayload) string
-	GenerateAccessToken(payload entity.AuthenticationPayload) string
-	VerifyRefreshToken(refreshToken string) error
-	DecodeRefreshTokenPayload(refreshToken string) (entity.AuthenticationPayload, error)
-	DecodeAccessTokenPayload(accessToken string) (entity.AuthenticationPayload, error)
+	GenerateRefreshToken(payload entity.AuthenticationPayload) (string, int, error)
+	GenerateAccessToken(payload entity.AuthenticationPayload) (string, int, error)
+	VerifyRefreshToken(refreshToken string) (int, error)
+	DecodeRefreshTokenPayload(refreshToken string) (entity.AuthenticationPayload, int, error)
+	DecodeAccessTokenPayload(accessToken string) (entity.AuthenticationPayload, int, error)
 }

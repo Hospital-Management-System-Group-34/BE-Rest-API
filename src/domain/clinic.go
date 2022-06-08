@@ -22,7 +22,10 @@ type ClinicRepository interface {
 }
 
 type AddClinicUseCase interface {
-	Execute(payload entity.Clinic) (int, error)
+	Execute(
+		payload entity.Clinic,
+		authorizationHeader entity.AuthorizationHeader,
+	) (int, error)
 }
 
 type GetClinicsUseCase interface {
@@ -34,9 +37,12 @@ type GetClinicByIDUseCase interface {
 }
 
 type UpdateClinicByIDUseCase interface {
-	Execute(payload entity.UpdateClinicPayload) (int, error)
+	Execute(
+		payload entity.UpdateClinicPayload,
+		authorizationHeader entity.AuthorizationHeader,
+	) (int, error)
 }
 
 type DeleteClinicByIDUseCase interface {
-	Execute(id uint) (int, error)
+	Execute(id uint, authorizationHeader entity.AuthorizationHeader) (int, error)
 }

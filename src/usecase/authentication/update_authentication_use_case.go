@@ -17,31 +17,33 @@ func NewUpdateAuthenticationUseCase(
 	jwtTokenManager application.TokenManager,
 	authenticationRepository domain.AuthenticationRepository,
 ) domain.UpdateAuthenticationUseCase {
-	newUpdateAuhtenticationUseCase := updateAuthenticationUseCase{
+	return &updateAuthenticationUseCase{
 		jwtTokenManager:          jwtTokenManager,
 		authenticationRepostiory: authenticationRepository,
 	}
-
-	return &newUpdateAuhtenticationUseCase
 }
 
 func (u *updateAuthenticationUseCase) Execute(payload entity.RefreshTokenPayload) (
 	entity.NewAccessToken, int, error,
 ) {
-	if err := u.jwtTokenManager.VerifyRefreshToken(payload.RefreshToken); err != nil {
-		return entity.NewAccessToken{}, http.StatusBadRequest, err
+	if code, err := u.jwtTokenManager.VerifyRefreshToken(payload.RefreshToken); err != nil {
+		return entity.NewAccessToken{}, code, err
 	}
 
 	if code, err := u.authenticationRepostiory.VerifyRefreshTokenExistence(payload); err != nil {
 		return entity.NewAccessToken{}, code, err
 	}
 
-	decodedPayload, err := u.jwtTokenManager.DecodeRefreshTokenPayload(payload.RefreshToken)
+	decodedPayload, code, err := u.jwtTokenManager.DecodeRefreshTokenPayload(payload.RefreshToken)
 	if err != nil {
-		return entity.NewAccessToken{}, http.StatusInternalServerError, err
+		return entity.NewAccessToken{}, code, err
 	}
 
-	accessToken := u.jwtTokenManager.GenerateAccessToken(decodedPayload)
+	accessToken, code, err := u.jwtTokenManager.GenerateAccessToken(decodedPayload)
+	if err != nil {
+		return entity.NewAccessToken{}, code, err
+	}
+
 	newAccessToken := entity.NewAccessToken{
 		AccessToken: accessToken,
 	}

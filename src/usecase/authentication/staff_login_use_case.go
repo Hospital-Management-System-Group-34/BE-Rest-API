@@ -22,14 +22,12 @@ func NewStaffLoginUseCase(
 	jwtTokenManager application.TokenManager,
 	authenticationRepository domain.AuthenticationRepository,
 ) domain.StaffLoginUseCase {
-	newStaffLoginUseCase := staffLoginUseCase{
+	return &staffLoginUseCase{
 		staffRepository:          staffRepository,
 		bcryptPasswordHash:       bcryptPasswordHash,
 		jwtTokenManager:          jwtTokenManager,
 		authenticationRepository: authenticationRepository,
 	}
-
-	return &newStaffLoginUseCase
 }
 
 func (u *staffLoginUseCase) Execute(payload entity.LoginPayload) (entity.NewLogin, int, error) {
@@ -38,16 +36,23 @@ func (u *staffLoginUseCase) Execute(payload entity.LoginPayload) (entity.NewLogi
 		return entity.NewLogin{}, code, err
 	}
 
-	err = u.bcryptPasswordHash.ComparePassword(payload.Password, staff.Password)
-	if err != nil {
+	if code, err = u.bcryptPasswordHash.ComparePassword(payload.Password, staff.Password); err != nil {
 		return entity.NewLogin{}, http.StatusBadRequest, fmt.Errorf("invalid credential")
 	}
 
 	authenticationPayload := entity.AuthenticationPayload{
 		ID: staff.ID,
 	}
-	refreshToken := u.jwtTokenManager.GenerateRefreshToken(authenticationPayload)
-	accessToken := u.jwtTokenManager.GenerateAccessToken(authenticationPayload)
+
+	refreshToken, code, err := u.jwtTokenManager.GenerateRefreshToken(authenticationPayload)
+	if err != nil {
+		return entity.NewLogin{}, code, err
+	}
+
+	accessToken, code, err := u.jwtTokenManager.GenerateAccessToken(authenticationPayload)
+	if err != nil {
+		return entity.NewLogin{}, code, err
+	}
 
 	authentication := entity.Authentication{
 		Token: refreshToken,

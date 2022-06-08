@@ -4,6 +4,7 @@ import (
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/delivery/http/echo/handler"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/delivery/http/echo/middleware"
 	repository "github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/repository/postgres"
+	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/service/jwt"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/service/postgres"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/usecase/clinic"
 	"github.com/labstack/echo/v4"
@@ -11,13 +12,24 @@ import (
 
 func ClinicRoutes(e *echo.Echo) {
 	postgresDB := postgres.Connect()
-	clinicRepository := repository.NewClinicRepository(postgresDB)
 
-	addClinicUseCase := clinic.NewAddClinicUseCase(clinicRepository)
+	clinicRepository := repository.NewClinicRepository(postgresDB)
+	jwtTokenManager := jwt.NewJWTTokenManager()
+	staffRepository := repository.NewStaffRepository(postgresDB)
+
+	addClinicUseCase := clinic.NewAddClinicUseCase(clinicRepository, jwtTokenManager, staffRepository)
 	getClinicsUseCase := clinic.NewGetClinicsUseCase(clinicRepository)
 	getClinicByIDUseCase := clinic.NewGetClinicByIDUseCase(clinicRepository)
-	updateClinicByIDUseCase := clinic.NewUpdateClinicByIDUseCase(clinicRepository)
-	deleteClinicByIDUseCase := clinic.NewDeleteClinicByIDUseCase(clinicRepository)
+	updateClinicByIDUseCase := clinic.NewUpdateClinicByIDUseCase(
+		clinicRepository,
+		jwtTokenManager,
+		staffRepository,
+	)
+	deleteClinicByIDUseCase := clinic.NewDeleteClinicByIDUseCase(
+		clinicRepository,
+		jwtTokenManager,
+		staffRepository,
+	)
 
 	clinicHandler := handler.NewClinicHandler(
 		addClinicUseCase,

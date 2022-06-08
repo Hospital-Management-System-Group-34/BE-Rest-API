@@ -15,11 +15,9 @@ type staffRepository struct {
 }
 
 func NewStaffRepository(db *gorm.DB) domain.StaffRepository {
-	newStaffRepository := staffRepository{
+	return &staffRepository{
 		db: db,
 	}
-
-	return &newStaffRepository
 }
 
 func (r *staffRepository) AddStaff(payload entity.Staff) (int, error) {
@@ -52,4 +50,15 @@ func (r *staffRepository) VerifyEmailAvailable(email string) (int, error) {
 	}
 
 	return http.StatusOK, nil
+}
+
+func (r *staffRepository) GetStaffByID(id uint) (entity.Staff, int, error) {
+	staff := entity.Staff{}
+	result := r.db.Where("id = ?", id).First(&staff)
+
+	if result.RowsAffected == 0 {
+		return entity.Staff{}, http.StatusNotFound, fmt.Errorf("staff not found")
+	}
+
+	return staff, http.StatusOK, nil
 }

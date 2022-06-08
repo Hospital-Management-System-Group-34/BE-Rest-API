@@ -22,7 +22,7 @@ type DoctorRepository interface {
 }
 
 type AddDoctorUseCase interface {
-	Execute(payload entity.Doctor) (int, error)
+	Execute(payload entity.Doctor, authorizationHeader entity.AuthorizationHeader) (int, error)
 }
 
 type GetDoctorsUseCase interface {
@@ -34,9 +34,12 @@ type GetDoctorByIDUseCase interface {
 }
 
 type UpdateDoctorByIDUseCase interface {
-	Execute(payload entity.UpdateDoctorPayload) (int, error)
+	Execute(
+		payload entity.UpdateDoctorPayload,
+		authorizationHeader entity.AuthorizationHeader,
+	) (int, error)
 }
 
 type DeleteDoctorByIDUseCase interface {
-	Execute(id uint) (int, error)
+	Execute(id uint, authorizationHeader entity.AuthorizationHeader) (int, error)
 }

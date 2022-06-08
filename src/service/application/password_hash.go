@@ -1,6 +1,6 @@
 package application
 
 type PasswordHash interface {
-	Hash(password string) (string, error)
-	ComparePassword(plain string, encrypted string) error
+	Hash(password string) (string, int, error)
+	ComparePassword(plain string, encrypted string) (int, error)
 }
