@@ -1,7 +1,7 @@
 package clinic
 
 import (
-	"fmt"
+	// "fmt"
 	"net/http"
 
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/domain"
@@ -31,19 +31,20 @@ func (u *deleteClinicByIDUseCase) Execute(
 	id uint,
 	authorizationHeader entity.AuthorizationHeader,
 ) (int, error) {
-	decodedPayload, code, err := u.jwtTokenManager.DecodeAccessTokenPayload(authorizationHeader.AccessToken)
-	if err != nil {
-		return code, err
-	}
+	return http.StatusOK, nil
+	// decodedPayload, code, err := u.jwtTokenManager.DecodeAccessTokenPayload(authorizationHeader.AccessToken)
+	// if err != nil {
+	// 	return code, err
+	// }
 
-	staff, code, err := u.staffRepository.GetStaffByID(decodedPayload.ID)
-	if err != nil {
-		return code, err
-	}
+	// staff, code, err := u.staffRepository.GetStaffByID(decodedPayload.ID)
+	// if err != nil {
+	// 	return code, err
+	// }
 
-	if staff.StaffType != "admin" {
-		return http.StatusForbidden, fmt.Errorf("restricted resource")
-	}
+	// if staff.StaffType != "admin" {
+	// 	return http.StatusForbidden, fmt.Errorf("restricted resource")
+	// }
 
 	return u.clinicRepository.DeleteClinicByID(id)
 }

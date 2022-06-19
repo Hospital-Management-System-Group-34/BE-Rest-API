@@ -10,14 +10,18 @@ import (
 func CreateServer() *echo.Echo {
 	e := echo.New()
 
-	routes.HelloRoutes(e)
-	routes.StaffRoutes(e)
+	routes.UserRoutes(e)
 	routes.AuthenticationRoutes(e)
-	routes.PatientRoutes(e)
-	routes.ClinicRoutes(e)
-	routes.DoctorRoutes(e)
-	routes.ScheduleRoutes(e)
-	routes.SessionRoutes(e)
+
+	// routes.HelloRoutes(e)
+	// routes.StaffRoutes(e)
+	// routes.PatientRoutes(e)
+	// routes.ClinicRoutes(e)
+	// routes.DoctorRoutes(e)
+	// routes.ScheduleRoutes(e)
+	// routes.SessionRoutes(e)
+
+	routes.StaticFiles(e)
 
 	validator.NewValidator(e)
 

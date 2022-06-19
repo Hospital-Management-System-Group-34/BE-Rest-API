@@ -9,39 +9,39 @@ import (
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/service/application"
 )
 
-type staffLoginUseCase struct {
-	staffRepository          domain.StaffRepository
+type userLoginUseCase struct {
+	userRepository           domain.UserRepository
 	bcryptPasswordHash       application.PasswordHash
 	jwtTokenManager          application.TokenManager
 	authenticationRepository domain.AuthenticationRepository
 }
 
-func NewStaffLoginUseCase(
-	staffRepository domain.StaffRepository,
+func NewUserLoginUseCase(
+	userRepository domain.UserRepository,
 	bcryptPasswordHash application.PasswordHash,
 	jwtTokenManager application.TokenManager,
 	authenticationRepository domain.AuthenticationRepository,
 ) domain.StaffLoginUseCase {
-	return &staffLoginUseCase{
-		staffRepository:          staffRepository,
+	return &userLoginUseCase{
+		userRepository:           userRepository,
 		bcryptPasswordHash:       bcryptPasswordHash,
 		jwtTokenManager:          jwtTokenManager,
 		authenticationRepository: authenticationRepository,
 	}
 }
 
-func (u *staffLoginUseCase) Execute(payload entity.LoginPayload) (entity.NewLogin, int, error) {
-	staff, code, err := u.staffRepository.GetStaffByEmail(payload.Email)
+func (u *userLoginUseCase) Execute(payload entity.LoginPayload) (entity.NewLogin, int, error) {
+	user, code, err := u.userRepository.GetUserByID(payload.ID)
 	if err != nil {
 		return entity.NewLogin{}, code, err
 	}
 
-	if code, err = u.bcryptPasswordHash.ComparePassword(payload.Password, staff.Password); err != nil {
+	if code, err = u.bcryptPasswordHash.ComparePassword(payload.Password, user.Password); err != nil {
 		return entity.NewLogin{}, http.StatusBadRequest, fmt.Errorf("invalid credential")
 	}
 
 	authenticationPayload := entity.AuthenticationPayload{
-		ID: staff.ID,
+		ID: user.ID,
 	}
 
 	refreshToken, code, err := u.jwtTokenManager.GenerateRefreshToken(authenticationPayload)

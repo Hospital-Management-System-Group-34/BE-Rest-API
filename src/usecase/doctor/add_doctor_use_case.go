@@ -1,7 +1,7 @@
 package doctor
 
 import (
-	"fmt"
+	// "fmt"
 	"net/http"
 
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/domain"
@@ -34,21 +34,21 @@ func (u *addDoctorUseCase) Execute(
 	payload entity.Doctor,
 	authorizationHeader entity.AuthorizationHeader,
 ) (int, error) {
-	fmt.Println("uhuhuhuhuy", authorizationHeader)
-	decodedPayload, code, err := u.jwtTokenManager.DecodeAccessTokenPayload(authorizationHeader.AccessToken)
-	if err != nil {
-		return code, err
-	}
-	fmt.Println("uhuhuhuhuy", decodedPayload)
+	return http.StatusOK, nil
 
-	staff, code, err := u.staffRepository.GetStaffByID(decodedPayload.ID)
-	if err != nil {
-		return code, err
-	}
+	// decodedPayload, code, err := u.jwtTokenManager.DecodeAccessTokenPayload(authorizationHeader.AccessToken)
+	// if err != nil {
+	// 	return code, err
+	// }
 
-	if staff.StaffType != "admin" {
-		return http.StatusForbidden, fmt.Errorf("restricted resource")
-	}
+	// staff, code, err := u.staffRepository.GetStaffByID(decodedPayload.ID)
+	// if err != nil {
+	// 	return code, err
+	// }
+
+	// if staff.StaffType != "admin" {
+	// 	return http.StatusForbidden, fmt.Errorf("restricted resource")
+	// }
 
 	if _, code, err := u.clinicRepository.GetClinicByID(payload.ClinicID); err != nil {
 		return code, err

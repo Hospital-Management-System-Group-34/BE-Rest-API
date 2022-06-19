@@ -89,12 +89,12 @@ func (j *jwtTokenManager) decodePayload(token string, secretKey string) (
 	}
 
 	authenticationPayload := entity.AuthenticationPayload{
-		ID: uint(claims["id"].(float64)),
+		ID: claims["id"].(string),
 	}
 	return authenticationPayload, nil
 }
 
-func (j *jwtTokenManager) generateToken(id uint, expirationTime time.Duration, secretKey string) (string, error) {
+func (j *jwtTokenManager) generateToken(id string, expirationTime time.Duration, secretKey string) (string, error) {
 	claims := &Claims{
 		ID: id,
 		StandardClaims: jwt.StandardClaims{

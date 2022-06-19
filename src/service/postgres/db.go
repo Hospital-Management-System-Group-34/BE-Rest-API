@@ -33,6 +33,7 @@ func InitMigration() {
 	db := Connect()
 
 	db.AutoMigrate(
+		&entity.User{},
 		&entity.Staff{},
 		&entity.Authentication{},
 		&entity.Doctor{},
