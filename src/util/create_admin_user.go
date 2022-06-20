@@ -13,8 +13,7 @@ import (
 func CreateAdminUser() {
 	db := postgres.Connect()
 
-	staff := entity.User{}
-	result := db.Where("role = ?", "Admin").First(&staff)
+	result := db.Where("role = ?", "Admin").First(&entity.User{})
 
 	if result.RowsAffected == 0 {
 		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(os.Getenv("ADMIN_PASSWORD")), bcrypt.DefaultCost)

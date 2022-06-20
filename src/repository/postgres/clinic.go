@@ -36,7 +36,7 @@ func (r *clinicRepository) GetClinics() ([]entity.Clinic, int, error) {
 	return clinics, http.StatusOK, nil
 }
 
-func (r *clinicRepository) GetClinicByID(id uint) (entity.Clinic, int, error) {
+func (r *clinicRepository) GetClinicByID(id string) (entity.Clinic, int, error) {
 	clinic := entity.Clinic{}
 	result := r.db.Where("id = ?", id).First(&clinic)
 
@@ -64,7 +64,7 @@ func (r *clinicRepository) UpdateClinicByID(payload entity.UpdateClinicPayload) 
 	return http.StatusOK, nil
 }
 
-func (r *clinicRepository) DeleteClinicByID(id uint) (int, error) {
+func (r *clinicRepository) DeleteClinicByID(id string) (int, error) {
 	result := r.db.Where("id = ?", id).Delete(&entity.Clinic{})
 
 	if result.RowsAffected == 0 {

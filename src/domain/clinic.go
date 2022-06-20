@@ -16,9 +16,9 @@ type ClinicHandler interface {
 type ClinicRepository interface {
 	AddClinic(payload entity.Clinic) (int, error)
 	GetClinics() ([]entity.Clinic, int, error)
-	GetClinicByID(id uint) (entity.Clinic, int, error)
+	GetClinicByID(id string) (entity.Clinic, int, error)
 	UpdateClinicByID(payload entity.UpdateClinicPayload) (int, error)
-	DeleteClinicByID(id uint) (int, error)
+	DeleteClinicByID(id string) (int, error)
 }
 
 type AddClinicUseCase interface {
@@ -33,7 +33,7 @@ type GetClinicsUseCase interface {
 }
 
 type GetClinicByIDUseCase interface {
-	Execute(id uint) (entity.Clinic, int, error)
+	Execute(id string) (entity.Clinic, int, error)
 }
 
 type UpdateClinicByIDUseCase interface {
@@ -44,5 +44,5 @@ type UpdateClinicByIDUseCase interface {
 }
 
 type DeleteClinicByIDUseCase interface {
-	Execute(id uint, authorizationHeader entity.AuthorizationHeader) (int, error)
+	Execute(id string, authorizationHeader entity.AuthorizationHeader) (int, error)
 }

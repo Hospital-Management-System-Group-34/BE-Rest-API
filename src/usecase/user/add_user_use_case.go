@@ -8,24 +8,26 @@ import (
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/domain"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/entity"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/service/application"
-	"github.com/aidarkhanov/nanoid"
 )
 
 type addUserUseCase struct {
 	userRepository     domain.UserRepository
 	bcryptPasswordHash application.PasswordHash
 	jwtTokenManager    application.TokenManager
+	nanoidIDGenerator  application.IDGenerator
 }
 
 func NewAddUserUseCase(
 	userRepository domain.UserRepository,
 	bcryptPasswordHash application.PasswordHash,
 	jwtTokenManager application.TokenManager,
+	nanoidIDGenerator application.IDGenerator,
 ) domain.AddUserUseCase {
 	return &addUserUseCase{
 		userRepository:     userRepository,
 		bcryptPasswordHash: bcryptPasswordHash,
 		jwtTokenManager:    jwtTokenManager,
+		nanoidIDGenerator:  nanoidIDGenerator,
 	}
 }
 
@@ -55,17 +57,16 @@ func (u *addUserUseCase) Execute(
 		return entity.AddedUser{}, http.StatusBadRequest, fmt.Errorf("role must be Doctor or Staff")
 	}
 
-	nanoid, err := nanoid.Generate(nanoid.DefaultAlphabet, 5)
+	generatedID, code, err := u.nanoidIDGenerator.Generate()
 	if err != nil {
-		return entity.AddedUser{}, http.StatusInternalServerError, err
+		return entity.AddedUser{}, code, err
 	}
-	payload.ID = fmt.Sprintf("%s-%s", strings.ToLower(payload.Role), strings.ToLower(nanoid))
+	payload.ID = fmt.Sprintf("%s-%s", strings.ToLower(payload.Role), generatedID)
 
 	hashedPassword, code, err := u.bcryptPasswordHash.Hash(payload.Password)
 	if err != nil {
 		return entity.AddedUser{}, code, err
 	}
-
 	payload.Password = hashedPassword
 
 	return u.userRepository.AddUser(payload)

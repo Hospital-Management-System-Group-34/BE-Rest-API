@@ -13,7 +13,7 @@ type User struct {
 	Password   string    `gorm:"not null" validate:"required"`
 	Role       string    `gorm:"not null,index:idx_role" json:"role" validate:"required"`
 	Avatar     string    `json:"avatar"`
-	ScheduleID string    `json:"scheduleID"`
+	ClinicID   string    `json:"clinicID"`
 	CreatedAt  time.Time `gorm:"not null" json:"created_at"`
 	UpdatedAt  time.Time `gorm:"not null" json:"updated_at"`
 }

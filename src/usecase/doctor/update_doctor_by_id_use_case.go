@@ -49,9 +49,9 @@ func (u *updateDoctorByIDUseCase) Execute(
 	// 	return http.StatusForbidden, fmt.Errorf("restricted resource")
 	// }
 
-	if _, code, err := u.clinicRepository.GetClinicByID(payload.ClinicID); err != nil {
-		return code, err
-	}
+	// if _, code, err := u.clinicRepository.GetClinicByID(payload.ClinicID); err != nil {
+	// 	return code, err
+	// }
 
 	return u.doctorRepository.UpdateDoctorByID(payload)
 }

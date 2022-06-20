@@ -15,20 +15,20 @@ func ClinicRoutes(e *echo.Echo) {
 
 	clinicRepository := repository.NewClinicRepository(postgresDB)
 	jwtTokenManager := jwt.NewJWTTokenManager()
-	staffRepository := repository.NewStaffRepository(postgresDB)
+	userRepository := repository.NewUserRepository(postgresDB)
 
-	addClinicUseCase := clinic.NewAddClinicUseCase(clinicRepository, jwtTokenManager, staffRepository)
+	addClinicUseCase := clinic.NewAddClinicUseCase(clinicRepository, jwtTokenManager, userRepository)
 	getClinicsUseCase := clinic.NewGetClinicsUseCase(clinicRepository)
 	getClinicByIDUseCase := clinic.NewGetClinicByIDUseCase(clinicRepository)
 	updateClinicByIDUseCase := clinic.NewUpdateClinicByIDUseCase(
 		clinicRepository,
 		jwtTokenManager,
-		staffRepository,
+		userRepository,
 	)
 	deleteClinicByIDUseCase := clinic.NewDeleteClinicByIDUseCase(
 		clinicRepository,
 		jwtTokenManager,
-		staffRepository,
+		userRepository,
 	)
 
 	clinicHandler := handler.NewClinicHandler(
