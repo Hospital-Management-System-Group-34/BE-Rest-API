@@ -5,17 +5,17 @@ import (
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/entity"
 )
 
-type staffLogoutUseCase struct {
+type userLogoutUseCase struct {
 	authenticationRepository domain.AuthenticationRepository
 }
 
-func NewStaffLogoutUseCase(authenticationRepository domain.AuthenticationRepository) domain.StaffLogoutUseCase {
-	return &staffLogoutUseCase{
+func NewUserLogoutUseCase(authenticationRepository domain.AuthenticationRepository) domain.StaffLogoutUseCase {
+	return &userLogoutUseCase{
 		authenticationRepository: authenticationRepository,
 	}
 }
 
-func (u *staffLogoutUseCase) Execute(payload entity.RefreshTokenPayload) (int, error) {
+func (u *userLogoutUseCase) Execute(payload entity.RefreshTokenPayload) (int, error) {
 	if code, err := u.authenticationRepository.VerifyRefreshTokenExistence(payload); err != nil {
 		return code, err
 	}

@@ -12,18 +12,18 @@ import (
 type updateClinicByIDUseCase struct {
 	clinicRepository domain.ClinicRepository
 	jwtTokenManager  application.TokenManager
-	staffRepository  domain.StaffRepository
+	userRepository   domain.UserRepository
 }
 
 func NewUpdateClinicByIDUseCase(
 	clinicRepository domain.ClinicRepository,
 	jwtTokenManager application.TokenManager,
-	staffRepository domain.StaffRepository,
+	userRepository domain.UserRepository,
 ) domain.UpdateClinicByIDUseCase {
 	return &updateClinicByIDUseCase{
 		clinicRepository: clinicRepository,
 		jwtTokenManager:  jwtTokenManager,
-		staffRepository:  staffRepository,
+		userRepository:   userRepository,
 	}
 }
 
@@ -36,12 +36,12 @@ func (u *updateClinicByIDUseCase) Execute(
 		return code, err
 	}
 
-	staff, code, err := u.staffRepository.GetStaffByID(decodedPayload.ID)
+	user, code, err := u.userRepository.GetUserByID(decodedPayload.ID)
 	if err != nil {
 		return code, err
 	}
 
-	if staff.StaffType != "admin" {
+	if user.Role != "Admin" {
 		return http.StatusForbidden, fmt.Errorf("restricted resource")
 	}
 

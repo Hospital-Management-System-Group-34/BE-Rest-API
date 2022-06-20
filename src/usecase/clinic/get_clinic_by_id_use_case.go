@@ -15,6 +15,6 @@ func NewGetClinicByIDUseCase(clinicRepository domain.ClinicRepository) domain.Ge
 	}
 }
 
-func (u *getClinicByIDUseCase) Execute(id uint) (entity.Clinic, int, error) {
+func (u *getClinicByIDUseCase) Execute(id string) (entity.Clinic, int, error) {
 	return u.clinicRepository.GetClinicByID(id)
 }

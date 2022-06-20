@@ -15,18 +15,18 @@ func AuthenticationRoutes(e *echo.Echo) {
 	postgresDB := postgres.Connect()
 
 	authenticationRepository := repository.NewAuthenticationRepository(postgresDB)
-	staffRepository := repository.NewStaffRepository(postgresDB)
+	userRepository := repository.NewUserRepository(postgresDB)
 
 	bcryptPasswordHash := bcrypt.NewBcryptPasswordHash()
 	jwtTokenManager := jwt.NewJWTTokenManager()
 
-	staffLoginUseCase := authentication.NewStaffLoginUseCase(
-		staffRepository,
+	staffLoginUseCase := authentication.NewUserLoginUseCase(
+		userRepository,
 		bcryptPasswordHash,
 		jwtTokenManager,
 		authenticationRepository,
 	)
-	staffLogoutUsecase := authentication.NewStaffLogoutUseCase(authenticationRepository)
+	staffLogoutUsecase := authentication.NewUserLogoutUseCase(authenticationRepository)
 	updateAuthenticationUseCase := authentication.NewUpdateAuthenticationUseCase(
 		jwtTokenManager,
 		authenticationRepository,

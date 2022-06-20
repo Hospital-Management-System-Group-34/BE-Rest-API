@@ -15,6 +15,7 @@ require (
 )
 
 require (
+	github.com/aidarkhanov/nanoid v1.0.8 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect

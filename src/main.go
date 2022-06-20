@@ -22,7 +22,13 @@ func init() {
 	}
 
 	postgres.InitMigration()
-	util.CreateAdminStaff()
+
+	util.CreateAdminUser()
+	util.CreateStorageDirectory()
+
+	util.InitClinics()
+	util.InitDoctors()
+	util.InitStaffs()
 }
 
 func main() {

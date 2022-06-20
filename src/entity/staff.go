@@ -11,12 +11,3 @@ type Staff struct {
 	Password  string `gorm:"not null" json:"password" validate:"required"`
 	Token     string `gorm:"not null" json:"token" validate:"required"`
 }
-
-type LoginPayload struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
-}
-
-type AuthenticationPayload struct {
-	ID uint
-}

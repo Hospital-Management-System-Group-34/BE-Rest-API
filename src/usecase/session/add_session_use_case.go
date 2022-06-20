@@ -37,9 +37,9 @@ func (u *addSessionUseCase) Execute(payload entity.Session) (entity.Session, int
 		return entity.Session{}, code, err
 	}
 
-	if _, code, err := u.clinicRepository.GetClinicByID(payload.ClinicID); err != nil {
-		return entity.Session{}, code, err
-	}
+	// if _, code, err := u.clinicRepository.GetClinicByID(payload.ClinicID); err != nil {
+	// 	return entity.Session{}, code, err
+	// }
 
 	if _, code, err := u.doctorRepository.GetDoctorByID(payload.DoctorID); err != nil {
 		return entity.Session{}, code, err

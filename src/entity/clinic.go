@@ -1,17 +1,21 @@
 package entity
 
-import "gorm.io/gorm"
+import (
+	"time"
+)
 
 type Clinic struct {
-	gorm.Model
-	Name string `gorm:"not null" json:"name" validate:"required"`
+	ID        string    `gorm:"not null,primaryKey,index:idx_id" json:"id"`
+	CreatedAt time.Time `gorm:"not null" json:"created_at"`
+	UpdatedAt time.Time `gorm:"not null" json:"updated_at"`
+	Name      string    `gorm:"not null" json:"name" validate:"required"`
 }
 
 type UpdateClinicPayload struct {
-	ID   uint   `param:"clinicID" validate:"required,number,gt=0"`
+	ID   string `param:"clinicID" validate:"required"`
 	Name string `json:"name" validate:"required"`
 }
 
 type ClinicIDPayload struct {
-	ID uint `param:"clinicID" validate:"required,number,gt=0"`
+	ID string `param:"clinicID" validate:"required"`
 }
