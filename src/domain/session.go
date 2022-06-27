@@ -7,13 +7,19 @@ import (
 
 type SessionHandler interface {
 	PostSessionHandler(c echo.Context) error
-	// GetSessionsHandler(c echo.Context) error
+	GetSessionsHandler(c echo.Context) error
 }
 
 type SessionRepository interface {
 	AddSession(payload entity.Session) (entity.Session, int, error)
-	GetSessionLastQueue(scheduleID uint) (int, int, error)
-	// GetSessions() ([]entity.Session, int, error)
+	GetSessionLastQueue(scheduleID string, date string) (int, int, error)
+	GetSessionByID(id string) (entity.Session, int, error)
+	GetSessionByPatientID(patientID string) ([]entity.Session, int, error)
+	GetSessions() ([]entity.Session, int, error)
+	GetSessionsByDoctorID(doctorID string) ([]entity.Session, int, error)
+	GetQueuedSessionsByDoctorID(doctorID string) ([]entity.Session, int, error)
+	GetCompletedSessionsByDoctorID(doctorID string) ([]entity.Session, int, error)
+	GetCancelledSessionsByDoctorID(doctorID string) ([]entity.Session, int, error)
 }
 
 type AddSessionUseCase interface {
@@ -21,5 +27,8 @@ type AddSessionUseCase interface {
 }
 
 type GetSessionsUseCase interface {
-	Execute() (int, error)
+	Execute(
+		payload entity.GetSessionParams,
+		authorizationHeader entity.AuthorizationHeader,
+	) ([]entity.Session, int, error)
 }

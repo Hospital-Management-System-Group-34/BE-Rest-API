@@ -33,13 +33,16 @@ func InitMigration() {
 	db := Connect()
 
 	db.AutoMigrate(
-		&entity.User{},
-		&entity.Staff{},
 		&entity.Authentication{},
-		&entity.Doctor{},
-		&entity.Patient{},
 		&entity.Clinic{},
+		&entity.User{},
+		&entity.Day{},
 		&entity.Schedule{},
+		&entity.Time{},
+		&entity.Patient{},
 		&entity.Session{},
+		&entity.MedicalRecord{},
+		// &entity.Staff{},
+		// &entity.Doctor{},
 	)
 }

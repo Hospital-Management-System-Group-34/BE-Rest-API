@@ -36,7 +36,7 @@ func (r *scheduleRepository) GetSchedules() ([]entity.Schedule, int, error) {
 	return schedules, http.StatusOK, nil
 }
 
-func (r *scheduleRepository) GetScheduleByID(id uint) (entity.Schedule, int, error) {
+func (r *scheduleRepository) GetScheduleByID(id string) (entity.Schedule, int, error) {
 	schedule := entity.Schedule{}
 	result := r.db.Where("id = ?", id).First(&schedule)
 
@@ -53,9 +53,8 @@ func (r *scheduleRepository) UpdateScheduleByID(payload entity.UpdateSchedulePay
 		return code, err
 	}
 
-	schedule.Day = payload.Day
-	schedule.Time = payload.Time
-	schedule.DoctorID = payload.DoctorID
+	*schedule.DayID = payload.DayID
+	*schedule.UserID = payload.UserID
 
 	result := r.db.Save(&schedule)
 
@@ -66,7 +65,7 @@ func (r *scheduleRepository) UpdateScheduleByID(payload entity.UpdateSchedulePay
 	return http.StatusOK, nil
 }
 
-func (r *scheduleRepository) DeleteScheduleByID(id uint) (int, error) {
+func (r *scheduleRepository) DeleteScheduleByID(id string) (int, error) {
 	result := r.db.Where("id = ?", id).Delete(&entity.Schedule{})
 
 	if result.RowsAffected == 0 {
@@ -74,4 +73,11 @@ func (r *scheduleRepository) DeleteScheduleByID(id uint) (int, error) {
 	}
 
 	return http.StatusOK, nil
+}
+
+func (r *scheduleRepository) GetSchedulesByDoctorID(doctorID string) ([]entity.Schedule, int, error) {
+	schedules := []entity.Schedule{}
+	r.db.Where("user_id = ?", doctorID).Find(&schedules)
+
+	return schedules, http.StatusOK, nil
 }

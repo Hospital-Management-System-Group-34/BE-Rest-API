@@ -9,50 +9,43 @@ import (
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/service/application"
 )
 
-type updateScheduleByIDUseCase struct {
+type getSchedulesByDoctorIDUseCase struct {
 	scheduleRepository domain.ScheduleRepository
 	userRepository     domain.UserRepository
 	jwtTokenManager    application.TokenManager
 }
 
-func NewUpdateScheduleByIDUseCase(
+func NewGetSchedulesByDoctorIDUseCase(
 	scheduleRepository domain.ScheduleRepository,
 	userRepository domain.UserRepository,
 	jwtTokenManager application.TokenManager,
-) domain.UpdateScheduleByIDUseCase {
-	return &updateScheduleByIDUseCase{
+) domain.GetSchedulesByDoctorIDUseCase {
+	return &getSchedulesByDoctorIDUseCase{
 		scheduleRepository: scheduleRepository,
 		userRepository:     userRepository,
 		jwtTokenManager:    jwtTokenManager,
 	}
 }
 
-func (u *updateScheduleByIDUseCase) Execute(
-	payload entity.UpdateSchedulePayload,
+func (u *getSchedulesByDoctorIDUseCase) Execute(
+	payload entity.UserIDPayload,
 	authorizationHeader entity.AuthorizationHeader,
-) (int, error) {
+) ([]entity.Schedule, int, error) {
 	decodedPayload, code, err := u.jwtTokenManager.DecodeAccessTokenPayload(authorizationHeader.AccessToken)
 	if err != nil {
-		return code, err
+		return []entity.Schedule{}, code, err
 	}
 
 	user, code, err := u.userRepository.GetUserByID(decodedPayload.ID)
 	if err != nil {
-		return code, err
+		return []entity.Schedule{}, code, err
 	}
 
-	if decodedPayload.ID != payload.UserID {
+	if decodedPayload.ID != payload.ID {
 		if user.Role != "Admin" && user.Role != "Staff" {
-			return http.StatusForbidden, fmt.Errorf("restricted resource")
-		}
-	}
-	schedule, code, err := u.scheduleRepository.GetScheduleByID(payload.ID)
-
-	if *schedule.UserID != payload.UserID {
-		if user.Role != "Admin" && user.Role != "Staff" {
-			return http.StatusForbidden, fmt.Errorf("restricted resource")
+			return []entity.Schedule{}, http.StatusForbidden, fmt.Errorf("restricted resource")
 		}
 	}
 
-	return u.scheduleRepository.UpdateScheduleByID(payload)
+	return u.scheduleRepository.GetSchedulesByDoctorID(payload.ID)
 }

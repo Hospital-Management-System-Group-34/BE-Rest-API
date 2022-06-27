@@ -11,7 +11,7 @@ import (
 type nanoidIDGenerator struct {
 }
 
-func NewNanoIDIDGenerator() application.IDGenerator {
+func NewNanoidIDGenerator() application.IDGenerator {
 	return &nanoidIDGenerator{}
 }
 

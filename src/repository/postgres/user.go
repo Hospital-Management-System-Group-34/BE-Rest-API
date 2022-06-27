@@ -77,3 +77,36 @@ func (r *userRepository) DeleteUserAvatar(payload entity.UserIDPayload) (int, er
 
 	return http.StatusOK, nil
 }
+
+func (r *userRepository) GetUserDoctorByID(id string) (entity.User, int, error) {
+	user, code, err := r.GetUserByID(id)
+	if err != nil {
+		return entity.User{}, code, err
+	}
+
+	if user.Role != "Doctor" {
+		return entity.User{}, http.StatusBadRequest, fmt.Errorf("user isn't Doctor")
+	}
+
+	return user, http.StatusOK, nil
+}
+
+func (r *userRepository) GetUserStaffByID(id string) (entity.User, int, error) {
+	user, code, err := r.GetUserByID(id)
+	if err != nil {
+		return entity.User{}, code, err
+	}
+
+	if user.Role != "Staff" {
+		return entity.User{}, http.StatusBadRequest, fmt.Errorf("user isn't Staff")
+	}
+
+	return user, http.StatusOK, nil
+}
+
+func (r *userRepository) GetUserDoctorsByClinicID(clinicID string) ([]entity.User, int, error) {
+	users := []entity.User{}
+	r.db.Where("role = ? AND clinic_id = ?", "Doctor", clinicID).Find(&users)
+
+	return users, http.StatusOK, nil
+}

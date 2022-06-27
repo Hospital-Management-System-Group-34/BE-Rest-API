@@ -12,14 +12,15 @@ func CreateServer() *echo.Echo {
 
 	routes.UserRoutes(e)
 	routes.AuthenticationRoutes(e)
+	routes.ClinicRoutes(e)
+	routes.ScheduleRoutes(e)
+	routes.PatientRoutes(e)
+	routes.SessionRoutes(e)
+	routes.MedicalRecordRoutes(e)
 
 	// routes.HelloRoutes(e)
 	// routes.StaffRoutes(e)
-	// routes.PatientRoutes(e)
-	// routes.ClinicRoutes(e)
 	// routes.DoctorRoutes(e)
-	// routes.ScheduleRoutes(e)
-	// routes.SessionRoutes(e)
 
 	routes.StaticFiles(e)
 

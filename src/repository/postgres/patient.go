@@ -36,29 +36,30 @@ func (r *patientRepository) GetPatients() ([]entity.Patient, int, error) {
 	return Patients, http.StatusOK, nil
 }
 
-func (r *patientRepository) GetPatientByID(id uint) (entity.Patient, int, error) {
-	Patient := entity.Patient{}
-	result := r.db.Where("id = ?", id).First(&Patient)
+func (r *patientRepository) GetPatientByID(id string) (entity.Patient, int, error) {
+	patient := entity.Patient{}
+	result := r.db.Where("id = ?", id).First(&patient)
 
 	if result.RowsAffected == 0 {
 		return entity.Patient{}, http.StatusNotFound, fmt.Errorf("patient not found")
 	}
 
-	return Patient, http.StatusOK, nil
+	return patient, http.StatusOK, nil
 }
 
 func (r *patientRepository) UpdatePatientByID(payload entity.UpdatePatientPayload) (int, error) {
-	Patient, code, err := r.GetPatientByID(payload.ID)
+	patient, code, err := r.GetPatientByID(payload.ID)
 	if err != nil {
 		return code, err
 	}
 
-	Patient.FName = payload.FName
-	Patient.LName = payload.LName
-	Patient.Phone = payload.Phone
-	Patient.Complaint = payload.Complaint
+	patient.NIK = payload.NIK
+	patient.Name = payload.Name
+	patient.Phone = payload.Phone
+	patient.Gender = payload.Gender
+	patient.MedicalRecord = payload.MedicalRecord
 
-	result := r.db.Save(&Patient)
+	result := r.db.Save(&patient)
 
 	if result.Error != nil {
 		return http.StatusInternalServerError, result.Error
@@ -67,11 +68,43 @@ func (r *patientRepository) UpdatePatientByID(payload entity.UpdatePatientPayloa
 	return http.StatusOK, nil
 }
 
-func (r *patientRepository) DeletePatientByID(id uint) (int, error) {
+func (r *patientRepository) DeletePatientByID(id string) (int, error) {
 	result := r.db.Where("id = ?", id).Delete(&entity.Patient{})
 
 	if result.RowsAffected == 0 {
 		return http.StatusNotFound, fmt.Errorf("patient not found")
+	}
+
+	return http.StatusOK, nil
+}
+
+func (r *patientRepository) GetPatientByMedicalRecord(medicalRecord string) (entity.Patient, int, error) {
+	patient := entity.Patient{}
+	result := r.db.Where("medical_record = ?", medicalRecord).First(&patient)
+
+	if result.RowsAffected == 0 {
+		return entity.Patient{}, http.StatusNotFound, fmt.Errorf("patient not found")
+	}
+
+	return patient, http.StatusOK, nil
+}
+
+func (r *patientRepository) GetPatientByNIK(nik string) (entity.Patient, int, error) {
+	patient := entity.Patient{}
+	result := r.db.Where("nik = ?", nik).First(&patient)
+
+	if result.RowsAffected == 0 {
+		return entity.Patient{}, http.StatusNotFound, fmt.Errorf("patient not found")
+	}
+
+	return patient, http.StatusOK, nil
+}
+
+func (r *patientRepository) VerifyNewNIK(nik string) (int, error) {
+	result := r.db.Where("nik = ?", nik).First(&entity.Patient{})
+
+	if result.RowsAffected > 0 {
+		return http.StatusBadRequest, fmt.Errorf("nik already registered")
 	}
 
 	return http.StatusOK, nil

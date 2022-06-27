@@ -19,7 +19,7 @@ func ClinicRoutes(e *echo.Echo) {
 
 	addClinicUseCase := clinic.NewAddClinicUseCase(clinicRepository, jwtTokenManager, userRepository)
 	getClinicsUseCase := clinic.NewGetClinicsUseCase(clinicRepository)
-	getClinicByIDUseCase := clinic.NewGetClinicByIDUseCase(clinicRepository)
+	getClinicByIDUseCase := clinic.NewGetClinicByIDUseCase(clinicRepository, userRepository)
 	updateClinicByIDUseCase := clinic.NewUpdateClinicByIDUseCase(
 		clinicRepository,
 		jwtTokenManager,

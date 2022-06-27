@@ -26,6 +26,10 @@ func CreateAdminUser() {
 			Phone:      os.Getenv("ADMIN_PHONE"),
 			Password:   string(hashedPassword),
 			Role:       "Admin",
+			Address:    "Simars",
+			BirthPlace: "Jakarta",
+			BirthDate:  "1-1-1970",
+			Religion:   "Admin",
 			CreatedAt:  createdAt,
 			UpdatedAt:  createdAt,
 		})

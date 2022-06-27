@@ -16,6 +16,7 @@ type patientHandler struct {
 	getPatientByIDUseCase    domain.GetPatientByIDUseCase
 	updatePatientByIDUseCase domain.UpdatePatientByIDUseCase
 	deletePatientByIDUseCase domain.DeletePatientByIDUseCase
+	getPatientByNIKUseCase   domain.GetPatientByNIKUseCase
 }
 
 func NewPatientHandler(
@@ -24,6 +25,7 @@ func NewPatientHandler(
 	getPatientByIDUseCase domain.GetPatientByIDUseCase,
 	updatePatientByIDUseCase domain.UpdatePatientByIDUseCase,
 	deletePatientByIDUseCase domain.DeletePatientByIDUseCase,
+	getPatientByNIKUseCase domain.GetPatientByNIKUseCase,
 ) domain.PatientHandler {
 	return &patientHandler{
 		addPatientUseCase:        addPatientUseCase,
@@ -31,6 +33,7 @@ func NewPatientHandler(
 		getPatientByIDUseCase:    getPatientByIDUseCase,
 		updatePatientByIDUseCase: updatePatientByIDUseCase,
 		deletePatientByIDUseCase: deletePatientByIDUseCase,
+		getPatientByNIKUseCase:   getPatientByNIKUseCase,
 	}
 }
 
@@ -58,7 +61,7 @@ func (h *patientHandler) PostPatientHandler(c echo.Context) error {
 }
 
 func (h *patientHandler) GetPatientsHandler(c echo.Context) error {
-	Patients, code, err := h.getPatientsUseCase.Execute()
+	patients, code, err := h.getPatientsUseCase.Execute()
 	if err != nil {
 		if code != http.StatusInternalServerError {
 			return c.JSON(util.ClientErrorResponse(code, err.Error()))
@@ -68,7 +71,7 @@ func (h *patientHandler) GetPatientsHandler(c echo.Context) error {
 		return c.JSON(util.ServerErrorResponse())
 	}
 
-	return c.JSON(util.SuccessResponseWithData(Patients))
+	return c.JSON(util.SuccessResponseWithData(patients))
 }
 
 func (h *patientHandler) GetPatientByIDHandler(c echo.Context) error {
@@ -81,7 +84,7 @@ func (h *patientHandler) GetPatientByIDHandler(c echo.Context) error {
 		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
-	Patient, code, err := h.getPatientByIDUseCase.Execute(payload.ID)
+	patient, code, err := h.getPatientByIDUseCase.Execute(payload.ID)
 	if err != nil {
 		if code != http.StatusInternalServerError {
 			return c.JSON(util.ClientErrorResponse(code, err.Error()))
@@ -91,7 +94,7 @@ func (h *patientHandler) GetPatientByIDHandler(c echo.Context) error {
 		return c.JSON(util.ServerErrorResponse())
 	}
 
-	return c.JSON(util.SuccessResponseWithData(Patient))
+	return c.JSON(util.SuccessResponseWithData(patient))
 }
 
 func (h *patientHandler) PutPatientByIDHandler(c echo.Context) error {
@@ -138,4 +141,27 @@ func (h *patientHandler) DeletePatientByIDHandler(c echo.Context) error {
 	}
 
 	return c.JSON(util.SuccessResponse())
+}
+
+func (h *patientHandler) GetPatientByNIKHandler(c echo.Context) error {
+	payload := entity.PatientNIKPayload{}
+	if err := c.Bind(&payload); err != nil {
+		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	if err := c.Validate(payload); err != nil {
+		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	patient, code, err := h.getPatientByNIKUseCase.Execute(payload)
+	if err != nil {
+		if code != http.StatusInternalServerError {
+			return c.JSON(util.ClientErrorResponse(code, err.Error()))
+		}
+
+		log.Fatal(err)
+		return c.JSON(util.ServerErrorResponse())
+	}
+
+	return c.JSON(util.SuccessResponseWithData(patient))
 }

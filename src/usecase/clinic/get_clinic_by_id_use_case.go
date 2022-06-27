@@ -7,14 +7,30 @@ import (
 
 type getClinicByIDUseCase struct {
 	clinicRepository domain.ClinicRepository
+	userRepository   domain.UserRepository
 }
 
-func NewGetClinicByIDUseCase(clinicRepository domain.ClinicRepository) domain.GetClinicByIDUseCase {
+func NewGetClinicByIDUseCase(
+	clinicRepository domain.ClinicRepository,
+	userRepository domain.UserRepository,
+) domain.GetClinicByIDUseCase {
 	return &getClinicByIDUseCase{
 		clinicRepository: clinicRepository,
+		userRepository:   userRepository,
 	}
 }
 
 func (u *getClinicByIDUseCase) Execute(id string) (entity.Clinic, int, error) {
-	return u.clinicRepository.GetClinicByID(id)
+	clinic, code, err := u.clinicRepository.GetClinicByID(id)
+	if err != nil {
+		return entity.Clinic{}, code, err
+	}
+
+	doctors, code, err := u.userRepository.GetUserDoctorsByClinicID(id)
+	if err != nil {
+		return entity.Clinic{}, code, err
+	}
+	clinic.Doctors = doctors
+
+	return clinic, code, err
 }

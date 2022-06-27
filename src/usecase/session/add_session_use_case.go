@@ -1,60 +1,78 @@
 package session
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/domain"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/entity"
+	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/service/application"
 )
 
 type addSessionUseCase struct {
 	sessionRepository  domain.SessionRepository
 	patientRepository  domain.PatientRepository
 	clinicRepository   domain.ClinicRepository
-	doctorRepository   domain.DoctorRepository
+	userRepository     domain.UserRepository
 	scheduleRepository domain.ScheduleRepository
+	nanoidIDGenerator  application.IDGenerator
 }
 
 func NewAddSessionUseCase(
 	sessionRepository domain.SessionRepository,
 	patientRepository domain.PatientRepository,
 	clinicRepository domain.ClinicRepository,
-	doctorRepository domain.DoctorRepository,
+	userRepository domain.UserRepository,
 	scheduleRepository domain.ScheduleRepository,
+	nanoidIDGenerator application.IDGenerator,
 ) domain.AddSessionUseCase {
 	return &addSessionUseCase{
 		sessionRepository:  sessionRepository,
 		patientRepository:  patientRepository,
 		clinicRepository:   clinicRepository,
-		doctorRepository:   doctorRepository,
+		userRepository:     userRepository,
 		scheduleRepository: scheduleRepository,
+		nanoidIDGenerator:  nanoidIDGenerator,
 	}
 }
 
 func (u *addSessionUseCase) Execute(payload entity.Session) (entity.Session, int, error) {
-	// panggil get by id patient, clinic, doctor, schedule, buat verifikasi
-	if _, code, err := u.patientRepository.GetPatientByID(payload.PatientID); err != nil {
+	if _, code, err := u.patientRepository.GetPatientByID(*payload.PatientID); err != nil {
 		return entity.Session{}, code, err
 	}
 
-	// if _, code, err := u.clinicRepository.GetClinicByID(payload.ClinicID); err != nil {
-	// 	return entity.Session{}, code, err
-	// }
-
-	if _, code, err := u.doctorRepository.GetDoctorByID(payload.DoctorID); err != nil {
+	if _, code, err := u.clinicRepository.GetClinicByID(*payload.ClinicID); err != nil {
 		return entity.Session{}, code, err
 	}
 
-	if _, code, err := u.scheduleRepository.GetScheduleByID(payload.ScheduleID); err != nil {
+	if _, code, err := u.userRepository.GetUserDoctorByID(*payload.DoctorID); err != nil {
 		return entity.Session{}, code, err
 	}
 
-	queue, code, err := u.sessionRepository.GetSessionLastQueue(payload.ScheduleID)
+	if _, code, err := u.scheduleRepository.GetScheduleByID(*payload.ScheduleID); err != nil {
+		return entity.Session{}, code, err
+	}
+
+	if payload.Status != "Dalam antrian" && payload.Status != "Dibatalkan" &&
+		payload.Status != "Selesai" {
+		return entity.Session{}, http.StatusBadRequest, fmt.Errorf(
+			"status must be Dalam Antrian, Dibatalkan, or Selesai",
+		)
+	}
+
+	queue, code, err := u.sessionRepository.GetSessionLastQueue(*payload.ScheduleID, payload.Date)
 	if err != nil {
 		return entity.Session{}, code, err
 	}
 
 	payload.Queue = queue + 1
+	payload.QueueCode = fmt.Sprintf("%s-%d", *payload.ClinicID, payload.Queue)
+
+	generatedID, code, err := u.nanoidIDGenerator.Generate()
+	if err != nil {
+		return entity.Session{}, code, err
+	}
+	payload.ID = fmt.Sprintf("session-%s", generatedID)
 
 	session, code, err := u.sessionRepository.AddSession(payload)
 	if err != nil {
