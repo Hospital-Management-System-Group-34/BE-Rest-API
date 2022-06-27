@@ -13,10 +13,11 @@ import (
 )
 
 type userHandler struct {
-	addUserUseCase          domain.AddUserUseCase
-	updateUserAvatarUseCase domain.UpdateUserAvatarUseCase
-	deleteUserAvatarUseCase domain.DeleteUserAvatarUseCase
-	getUserByIDUseCase      domain.GetUserByIDUseCase
+	addUserUseCase           domain.AddUserUseCase
+	updateUserAvatarUseCase  domain.UpdateUserAvatarUseCase
+	deleteUserAvatarUseCase  domain.DeleteUserAvatarUseCase
+	getUserByIDUseCase       domain.GetUserByIDUseCase
+	getUserDoctorByIDUseCase domain.GetUserDoctorByIDUseCase
 }
 
 func NewUserHandler(
@@ -24,12 +25,14 @@ func NewUserHandler(
 	updateUserAvatarUseCase domain.UpdateUserAvatarUseCase,
 	deleteUserAvatarUseCase domain.DeleteUserAvatarUseCase,
 	getUserByIDUseCase domain.GetUserByIDUseCase,
+	getUserDoctorByIDUseCase domain.GetUserDoctorByIDUseCase,
 ) domain.UserHandler {
 	return &userHandler{
-		addUserUseCase:          addUserUseCase,
-		updateUserAvatarUseCase: updateUserAvatarUseCase,
-		deleteUserAvatarUseCase: deleteUserAvatarUseCase,
-		getUserByIDUseCase:      getUserByIDUseCase,
+		addUserUseCase:           addUserUseCase,
+		updateUserAvatarUseCase:  updateUserAvatarUseCase,
+		deleteUserAvatarUseCase:  deleteUserAvatarUseCase,
+		getUserByIDUseCase:       getUserByIDUseCase,
+		getUserDoctorByIDUseCase: getUserDoctorByIDUseCase,
 	}
 }
 
@@ -137,7 +140,7 @@ func (h *userHandler) GetUserByIDHandler(c echo.Context) error {
 		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
-	user, code, err := h.getUserByIDUseCase.Execute(payload)
+	user, code, err := h.getUserDoctorByIDUseCase.Execute(payload)
 	if err != nil {
 		if code != http.StatusInternalServerError {
 			return c.JSON(util.ClientErrorResponse(code, err.Error()))

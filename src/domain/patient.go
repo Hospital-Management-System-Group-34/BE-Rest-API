@@ -11,14 +11,18 @@ type PatientHandler interface {
 	GetPatientByIDHandler(c echo.Context) error
 	PutPatientByIDHandler(c echo.Context) error
 	DeletePatientByIDHandler(c echo.Context) error
+	GetPatientByNIKHandler(c echo.Context) error
 }
 
 type PatientRepository interface {
 	AddPatient(payload entity.Patient) (int, error)
 	GetPatients() ([]entity.Patient, int, error)
-	GetPatientByID(id uint) (entity.Patient, int, error)
+	GetPatientByID(id string) (entity.Patient, int, error)
 	UpdatePatientByID(payload entity.UpdatePatientPayload) (int, error)
-	DeletePatientByID(id uint) (int, error)
+	DeletePatientByID(id string) (int, error)
+	GetPatientByMedicalRecord(medicalRecord string) (entity.Patient, int, error)
+	GetPatientByNIK(nik string) (entity.Patient, int, error)
+	VerifyNewNIK(nik string) (int, error)
 }
 
 type AddPatientUseCase interface {
@@ -30,7 +34,7 @@ type GetPatientsUseCase interface {
 }
 
 type GetPatientByIDUseCase interface {
-	Execute(id uint) (entity.Patient, int, error)
+	Execute(id string) (entity.Patient, int, error)
 }
 
 type UpdatePatientByIDUseCase interface {
@@ -38,5 +42,9 @@ type UpdatePatientByIDUseCase interface {
 }
 
 type DeletePatientByIDUseCase interface {
-	Execute(id uint) (int, error)
+	Execute(id string) (int, error)
+}
+
+type GetPatientByNIKUseCase interface {
+	Execute(payload entity.PatientNIKPayload) (entity.Patient, int, error)
 }

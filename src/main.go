@@ -29,6 +29,9 @@ func init() {
 	util.InitClinics()
 	util.InitDoctors()
 	util.InitStaffs()
+	util.InitDays()
+	util.InitSchedules()
+	util.InitTimes()
 }
 
 func main() {

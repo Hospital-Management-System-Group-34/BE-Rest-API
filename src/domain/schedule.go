@@ -11,18 +11,20 @@ type ScheduleHandler interface {
 	GetScheduleByIDHandler(c echo.Context) error
 	PutScheduleByIDHandler(c echo.Context) error
 	DeleteScheduleByIDHandler(c echo.Context) error
+	GetSchedulesByDoctorIDHandler(c echo.Context) error
 }
 
 type ScheduleRepository interface {
 	AddSchedule(payload entity.Schedule) (int, error)
 	GetSchedules() ([]entity.Schedule, int, error)
-	GetScheduleByID(id uint) (entity.Schedule, int, error)
+	GetScheduleByID(id string) (entity.Schedule, int, error)
 	UpdateScheduleByID(payload entity.UpdateSchedulePayload) (int, error)
-	DeleteScheduleByID(id uint) (int, error)
+	DeleteScheduleByID(id string) (int, error)
+	GetSchedulesByDoctorID(doctorID string) ([]entity.Schedule, int, error)
 }
 
 type AddScheduleUseCase interface {
-	Execute(payload entity.Schedule) (int, error)
+	Execute(payload entity.Schedule, authorizationHeader entity.AuthorizationHeader) (int, error)
 }
 
 type GetSchedulesUseCase interface {
@@ -30,13 +32,29 @@ type GetSchedulesUseCase interface {
 }
 
 type GetScheduleByIDUseCase interface {
-	Execute(id uint) (entity.Schedule, int, error)
+	Execute(
+		payload entity.ScheduleIDPayload,
+		authorizationHeader entity.AuthorizationHeader,
+	) (entity.Schedule, int, error)
 }
 
 type UpdateScheduleByIDUseCase interface {
-	Execute(payload entity.UpdateSchedulePayload) (int, error)
+	Execute(
+		payload entity.UpdateSchedulePayload,
+		authorizationHeader entity.AuthorizationHeader,
+	) (int, error)
 }
 
 type DeleteScheduleByIDUseCase interface {
-	Execute(id uint) (int, error)
+	Execute(
+		payload entity.ScheduleIDPayload,
+		authorizationHeader entity.AuthorizationHeader,
+	) (int, error)
+}
+
+type GetSchedulesByDoctorIDUseCase interface {
+	Execute(
+		payload entity.UserIDPayload,
+		authorizationHeader entity.AuthorizationHeader,
+	) ([]entity.Schedule, int, error)
 }

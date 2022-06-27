@@ -1,21 +1,24 @@
 package entity
 
-import "gorm.io/gorm"
+import "time"
 
 type Schedule struct {
-	gorm.Model
-	Day      string `gorm:"not null" json:"day" validate:"required"`
-	Time     string `gorm:"not null" json:"time" validate:"required"`
-	DoctorID uint   `gorm:"not null" json:"doctorID" validate:"required,number,gt=0"`
+	ID        string    `gorm:"not null" json:"id"`
+	DayID     *string   `gorm:"not null" json:"dayID" validate:"required"`
+	UserID    *string   `gorm:"not null" json:"userID" validate:"required"`
+	CreatedAt time.Time `gorm:"not null" json:"createdAt"`
+	UpdatedAt time.Time `gorm:"not null" json:"updatedAt"`
+	Day       Day       `json:"day"`
+	Time      Time      `json:"time"`
 }
 
 type UpdateSchedulePayload struct {
-	ID       uint   `param:"scheduleID" validate:"required,number,gt=0"`
-	Day      string `json:"day" validate:"required"`
-	Time     string `json:"time" validate:"required"`
-	DoctorID uint   `json:"doctorID" validate:"required,number,gt=0"`
+	ID     string `param:"scheduleID" validate:"required"`
+	DayID  string `json:"dayID" validate:"required"`
+	UserID string `json:"userID" validate:"required"`
 }
 
 type ScheduleIDPayload struct {
-	ID uint `param:"scheduleID" validate:"required,number,gt=0"`
+	ID     string `param:"scheduleID" validate:"required"`
+	UserID string `param:"userID" validate:"required"`
 }

@@ -6,9 +6,10 @@ import (
 
 type Clinic struct {
 	ID        string    `gorm:"not null,primaryKey,index:idx_id" json:"id"`
-	CreatedAt time.Time `gorm:"not null" json:"created_at"`
-	UpdatedAt time.Time `gorm:"not null" json:"updated_at"`
 	Name      string    `gorm:"not null" json:"name" validate:"required"`
+	CreatedAt time.Time `gorm:"not null" json:"createdAt"`
+	UpdatedAt time.Time `gorm:"not null" json:"updatedAt"`
+	Doctors   []User    `json:"doctors"`
 }
 
 type UpdateClinicPayload struct {

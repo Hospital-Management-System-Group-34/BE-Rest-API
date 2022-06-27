@@ -4,6 +4,7 @@ import (
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/delivery/http/echo/handler"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/delivery/http/echo/middleware"
 	repository "github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/repository/postgres"
+	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/service/jwt"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/service/postgres"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/usecase/schedule"
 
@@ -13,13 +14,35 @@ import (
 func ScheduleRoutes(e *echo.Echo) {
 	postgresDB := postgres.Connect()
 	scheduleRepository := repository.NewScheduleRepository(postgresDB)
-	doctorRepository := repository.NewDoctorRepository(postgresDB)
+	userRepository := repository.NewUserRepository(postgresDB)
+	jwtTokenManager := jwt.NewJWTTokenManager()
 
-	addScheduleUseCase := schedule.NewAddScheduleUseCase(scheduleRepository, doctorRepository)
+	addScheduleUseCase := schedule.NewAddScheduleUseCase(
+		scheduleRepository,
+		userRepository,
+		jwtTokenManager,
+	)
 	getSchedulesUseCase := schedule.NewGetSchedulesUseCase(scheduleRepository)
-	getScheduleByIDUseCase := schedule.NewGetScheduleByIDUseCase(scheduleRepository)
-	updateScheduleByIDUseCase := schedule.NewUpdateScheduleByIDUseCase(scheduleRepository, doctorRepository)
-	deleteScheduleByIDUseCase := schedule.NewDeleteScheduleByIDUseCase(scheduleRepository)
+	getScheduleByIDUseCase := schedule.NewGetScheduleByIDUseCase(
+		scheduleRepository,
+		userRepository,
+		jwtTokenManager,
+	)
+	updateScheduleByIDUseCase := schedule.NewUpdateScheduleByIDUseCase(
+		scheduleRepository,
+		userRepository,
+		jwtTokenManager,
+	)
+	deleteScheduleByIDUseCase := schedule.NewDeleteScheduleByIDUseCase(
+		scheduleRepository,
+		userRepository,
+		jwtTokenManager,
+	)
+	getScheduleByDoctorIDUseCase := schedule.NewGetSchedulesByDoctorIDUseCase(
+		scheduleRepository,
+		userRepository,
+		jwtTokenManager,
+	)
 
 	scheduleHandler := handler.NewScheduleHandler(
 		addScheduleUseCase,
@@ -27,11 +50,12 @@ func ScheduleRoutes(e *echo.Echo) {
 		getScheduleByIDUseCase,
 		updateScheduleByIDUseCase,
 		deleteScheduleByIDUseCase,
+		getScheduleByDoctorIDUseCase,
 	)
 
-	e.POST("/schedules", scheduleHandler.PostScheduleHandler, middleware.JWTMiddleware())
-	e.GET("/schedules", scheduleHandler.GetSchedulesHandler, middleware.JWTMiddleware())
-	e.GET("/schedules/:scheduleID", scheduleHandler.GetScheduleByIDHandler, middleware.JWTMiddleware())
-	e.PUT("/schedules/:scheduleID", scheduleHandler.PutScheduleByIDHandler, middleware.JWTMiddleware())
-	e.DELETE("/schedules/:scheduleID", scheduleHandler.DeleteScheduleByIDHandler, middleware.JWTMiddleware())
+	e.POST("/users/:userID/schedules", scheduleHandler.PostScheduleHandler, middleware.JWTMiddleware())
+	e.GET("/users/:userID/schedules", scheduleHandler.GetSchedulesByDoctorIDHandler, middleware.JWTMiddleware())
+	e.GET("/users/:userID/schedules/:scheduleID", scheduleHandler.GetScheduleByIDHandler, middleware.JWTMiddleware())
+	e.PUT("/users/:userID/schedules/:scheduleID", scheduleHandler.PutScheduleByIDHandler, middleware.JWTMiddleware())
+	e.DELETE("/users/:userID/schedules", scheduleHandler.DeleteScheduleByIDHandler, middleware.JWTMiddleware())
 }

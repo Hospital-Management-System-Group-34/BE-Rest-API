@@ -55,7 +55,13 @@ func InitDoctors() {
 
 			doctor.Phone = "08123456789"
 			doctor.Role = "Doctor"
-			doctor.ClinicID = fmt.Sprintf("clinic-%d", index+1)
+			doctor.License = fmt.Sprintf("doctor-license-%d", index+1)
+			doctor.Address = "Kebon Jeruk, Jakarta Barat"
+			doctor.BirthPlace = "Jakarta"
+			doctor.BirthDate = "1-1-1970"
+			doctor.Religion = "Islam"
+
+			doctor.ClinicID = NewStringReference(fmt.Sprintf("clinic-%d", index+1))
 
 			db.Create(&doctor)
 		}

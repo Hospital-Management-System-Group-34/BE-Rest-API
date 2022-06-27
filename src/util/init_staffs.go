@@ -33,6 +33,10 @@ func InitStaffs() {
 
 			staff.Phone = "08123456789"
 			staff.Role = "Staff"
+			staff.Address = "Kebon Jeruk, Jakarta Barat"
+			staff.BirthPlace = "Jakarta"
+			staff.BirthDate = "1-1-1970"
+			staff.Religion = "Islam"
 
 			db.Create(&staff)
 		}

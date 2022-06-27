@@ -17,6 +17,9 @@ type UserRepository interface {
 	GetUserByID(id string) (entity.User, int, error)
 	UpdateUserAvatar(payload entity.UpdateAvatarLocationPayload) (int, error)
 	DeleteUserAvatar(payload entity.UserIDPayload) (int, error)
+	GetUserDoctorByID(id string) (entity.User, int, error)
+	GetUserStaffByID(id string) (entity.User, int, error)
+	GetUserDoctorsByClinicID(clinicID string) ([]entity.User, int, error)
 }
 
 type AddUserUseCase interface {
@@ -38,5 +41,9 @@ type DeleteUserAvatarUseCase interface {
 }
 
 type GetUserByIDUseCase interface {
+	Execute(payload entity.UserIDPayload) (entity.User, int, error)
+}
+
+type GetUserDoctorByIDUseCase interface {
 	Execute(payload entity.UserIDPayload) (entity.User, int, error)
 }

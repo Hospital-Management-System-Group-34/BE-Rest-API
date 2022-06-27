@@ -6,15 +6,40 @@ import (
 )
 
 type getPatientByIDUseCase struct {
-	patientRepository domain.PatientRepository
+	patientRepository       domain.PatientRepository
+	sessionRepository       domain.SessionRepository
+	medicalRecordRepository domain.MedicalRecordRepository
 }
 
-func NewGetPatientByIDUseCase(patientRepository domain.PatientRepository) domain.GetPatientByIDUseCase {
+func NewGetPatientByIDUseCase(
+	patientRepository domain.PatientRepository,
+	sessionRepository domain.SessionRepository,
+	medicalRecordRepository domain.MedicalRecordRepository,
+) domain.GetPatientByIDUseCase {
 	return &getPatientByIDUseCase{
-		patientRepository: patientRepository,
+		patientRepository:       patientRepository,
+		sessionRepository:       sessionRepository,
+		medicalRecordRepository: medicalRecordRepository,
 	}
 }
 
-func (u *getPatientByIDUseCase) Execute(id uint) (entity.Patient, int, error) {
-	return u.patientRepository.GetPatientByID(id)
+func (u *getPatientByIDUseCase) Execute(id string) (entity.Patient, int, error) {
+	patient, code, err := u.patientRepository.GetPatientByID(id)
+	if err != nil {
+		return entity.Patient{}, code, err
+	}
+
+	sessions, code, err := u.sessionRepository.GetSessionByPatientID(id)
+	if err != nil {
+		return entity.Patient{}, code, err
+	}
+	patient.Sessions = sessions
+
+	records, code, err := u.medicalRecordRepository.GetMedicalRecordsByPatientMedicalRecord(patient.MedicalRecord)
+	if err != nil {
+		return entity.Patient{}, code, err
+	}
+	patient.MedicalRecords = records
+
+	return patient, code, err
 }

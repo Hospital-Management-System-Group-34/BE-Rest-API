@@ -14,6 +14,6 @@ func NewDeletePatientByIDUseCase(patientRepository domain.PatientRepository) dom
 	}
 }
 
-func (u *deletePatientByIDUseCase) Execute(id uint) (int, error) {
+func (u *deletePatientByIDUseCase) Execute(id string) (int, error) {
 	return u.patientRepository.DeletePatientByID(id)
 }

@@ -57,6 +57,15 @@ func (u *addUserUseCase) Execute(
 		return entity.AddedUser{}, http.StatusBadRequest, fmt.Errorf("role must be Doctor or Staff")
 	}
 
+	if payload.Role == "Doctor" {
+		if len(payload.License) == 0 {
+			return entity.AddedUser{}, http.StatusBadRequest, fmt.Errorf("license can't be empty for Doctor role")
+		}
+		if len(payload.Speciality) == 0 {
+			return entity.AddedUser{}, http.StatusBadRequest, fmt.Errorf("speciality can't be empty for Doctor role")
+		}
+	}
+
 	generatedID, code, err := u.nanoidIDGenerator.Generate()
 	if err != nil {
 		return entity.AddedUser{}, code, err

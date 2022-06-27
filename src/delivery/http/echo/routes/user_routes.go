@@ -16,10 +16,14 @@ func UserRoutes(e *echo.Echo) {
 	postgresDB := postgres.Connect()
 
 	userRepository := repository.NewUserRepository(postgresDB)
+	scheduleRepository := repository.NewScheduleRepository(postgresDB)
+	dayRepository := repository.NewDayRepository(postgresDB)
+	timeRepository := repository.NewTimeRepository(postgresDB)
+	clinicRepository := repository.NewClinicRepository(postgresDB)
 
 	jwtTokenManager := jwt.NewJWTTokenManager()
 	bcryptPasswordHash := bcrypt.NewBcryptPasswordHash()
-	nanoidIDGenerator := nanoid.NewNanoIDIDGenerator()
+	nanoidIDGenerator := nanoid.NewNanoidIDGenerator()
 
 	addUserUseCase := user.NewAddUserUseCase(
 		userRepository,
@@ -30,12 +34,20 @@ func UserRoutes(e *echo.Echo) {
 	updateUserAvatarUseCase := user.NewUpdateUserAvatarUseCase(userRepository, jwtTokenManager)
 	deleteUserAvatarUseCase := user.NewDeleteUserAvatarUseCase(userRepository, jwtTokenManager)
 	getUserByIDUseCase := user.NewGetUserByIDUseCase(userRepository)
+	getUserDoctorByIDUseCase := user.NewGetUserDoctorByIDUseCase(
+		userRepository,
+		scheduleRepository,
+		dayRepository,
+		timeRepository,
+		clinicRepository,
+	)
 
 	userHandler := handler.NewUserHandler(
 		addUserUseCase,
 		updateUserAvatarUseCase,
 		deleteUserAvatarUseCase,
 		getUserByIDUseCase,
+		getUserDoctorByIDUseCase,
 	)
 
 	e.POST("/users", userHandler.PostUserHandler, middleware.JWTMiddleware())

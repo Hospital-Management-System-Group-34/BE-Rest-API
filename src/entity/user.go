@@ -6,16 +6,23 @@ import (
 )
 
 type User struct {
-	ID         string    `gorm:"not null,primaryKey,index:idx_id" json:"id"`
-	Name       string    `gorm:"not null" json:"name" validate:"required"`
-	Speciality string    `json:"speciality"`
-	Phone      string    `gorm:"not null" json:"phone" validate:"required"`
-	Password   string    `gorm:"not null" validate:"required"`
-	Role       string    `gorm:"not null,index:idx_role" json:"role" validate:"required"`
-	Avatar     string    `json:"avatar"`
-	ClinicID   string    `json:"clinicID"`
-	CreatedAt  time.Time `gorm:"not null" json:"created_at"`
-	UpdatedAt  time.Time `gorm:"not null" json:"updated_at"`
+	ID         string     `gorm:"not null,primaryKey,index:idx_id" json:"id"`
+	Name       string     `gorm:"not null" json:"name" validate:"required"`
+	Speciality string     `json:"speciality"`
+	Phone      string     `gorm:"not null" json:"phone" validate:"required"`
+	Password   string     `gorm:"not null" json:"-" validate:"required"`
+	Role       string     `gorm:"not null,index:idx_role" json:"role" validate:"required"`
+	License    string     `json:"license"`
+	Address    string     `gorm:"not null" json:"address" validate:"required"`
+	BirthPlace string     `gorm:"not null" json:"birthPlace" validate:"required"`
+	BirthDate  string     `gorm:"not null" json:"birthDate" validate:"required"`
+	Religion   string     `gorm:"not null" json:"religion" validate:"required"`
+	Avatar     string     `json:"avatar"`
+	ClinicID   *string    `json:"clinicID"`
+	CreatedAt  time.Time  `gorm:"not null" json:"createdAt"`
+	UpdatedAt  time.Time  `gorm:"not null" json:"updatedAt"`
+	Clinic     Clinic     `json:"clinic"`
+	Schedules  []Schedule `json:"schedules"`
 }
 
 type AuthenticationPayload struct {
