@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -36,8 +37,9 @@ func init() {
 
 func main() {
 	e := server.CreateServer()
+	port := fmt.Sprintf(":%s", os.Getenv("PORT"))
 
-	if err := e.Start(os.Getenv("PORT")); err != http.ErrServerClosed {
+	if err := e.Start(port); err != http.ErrServerClosed {
 		log.Fatal(err)
 	}
 }
