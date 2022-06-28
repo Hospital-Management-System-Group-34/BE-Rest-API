@@ -53,13 +53,6 @@ func (u *addSessionUseCase) Execute(payload entity.Session) (entity.Session, int
 		return entity.Session{}, code, err
 	}
 
-	if payload.Status != "Dalam antrian" && payload.Status != "Dibatalkan" &&
-		payload.Status != "Selesai" {
-		return entity.Session{}, http.StatusBadRequest, fmt.Errorf(
-			"status must be Dalam Antrian, Dibatalkan, or Selesai",
-		)
-	}
-
 	queue, code, err := u.sessionRepository.GetSessionLastQueue(*payload.ScheduleID, payload.Date)
 	if err != nil {
 		return entity.Session{}, code, err
@@ -73,6 +66,8 @@ func (u *addSessionUseCase) Execute(payload entity.Session) (entity.Session, int
 		return entity.Session{}, code, err
 	}
 	payload.ID = fmt.Sprintf("session-%s", generatedID)
+
+	payload.Status = "Dalam antrian"
 
 	session, code, err := u.sessionRepository.AddSession(payload)
 	if err != nil {

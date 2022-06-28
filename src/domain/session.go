@@ -8,6 +8,9 @@ import (
 type SessionHandler interface {
 	PostSessionHandler(c echo.Context) error
 	GetSessionsHandler(c echo.Context) error
+	PostCompleteSessionHandler(c echo.Context) error
+	PostCancelSessionHandler(c echo.Context) error
+	PostActivateSessionHandler(c echo.Context) error
 }
 
 type SessionRepository interface {
@@ -20,6 +23,10 @@ type SessionRepository interface {
 	GetQueuedSessionsByDoctorID(doctorID string) ([]entity.Session, int, error)
 	GetCompletedSessionsByDoctorID(doctorID string) ([]entity.Session, int, error)
 	GetCancelledSessionsByDoctorID(doctorID string) ([]entity.Session, int, error)
+	UpdateSessionStatusToCompleted(id string) (int, error)
+	UpdateSessionStatusToCancelled(id string) (int, error)
+	UpdateSessionStatusToActive(id string) (int, error)
+	VerifyNoActiveSession() (int, error)
 }
 
 type AddSessionUseCase interface {
@@ -31,4 +38,26 @@ type GetSessionsUseCase interface {
 		payload entity.GetSessionParams,
 		authorizationHeader entity.AuthorizationHeader,
 	) ([]entity.Session, int, error)
+}
+
+type CompleteSessionUseCase interface {
+	Execute(
+		sessionIDPayload entity.SessionIDPayload,
+		medicalRecordPayload entity.MedicalRecord,
+		authorizationHeader entity.AuthorizationHeader,
+	) (int, error)
+}
+
+type CancelSessionUseCase interface {
+	Execute(
+		sessionIDPayload entity.SessionIDPayload,
+		authorizationHeader entity.AuthorizationHeader,
+	) (int, error)
+}
+
+type ActivateSessionUseCase interface {
+	Execute(
+		sessionIDPayload entity.SessionIDPayload,
+		authorizationHeader entity.AuthorizationHeader,
+	) (int, error)
 }

@@ -12,17 +12,26 @@ import (
 )
 
 type sessionHandler struct {
-	addSessionUseCase  domain.AddSessionUseCase
-	getSessionsUseCase domain.GetSessionsUseCase
+	addSessionUseCase      domain.AddSessionUseCase
+	getSessionsUseCase     domain.GetSessionsUseCase
+	completeSessionUseCase domain.CompleteSessionUseCase
+	cancelSessionUseCase   domain.CancelSessionUseCase
+	activateSessionUseCase domain.ActivateSessionUseCase
 }
 
 func NewSessionHandler(
 	addSessionUseCase domain.AddSessionUseCase,
 	getSessionsUseCase domain.GetSessionsUseCase,
+	completeSessionUseCase domain.CompleteSessionUseCase,
+	cancelSessionUseCase domain.CancelSessionUseCase,
+	activateSessionUseCase domain.ActivateSessionUseCase,
 ) domain.SessionHandler {
 	return &sessionHandler{
-		addSessionUseCase:  addSessionUseCase,
-		getSessionsUseCase: getSessionsUseCase,
+		addSessionUseCase:      addSessionUseCase,
+		getSessionsUseCase:     getSessionsUseCase,
+		completeSessionUseCase: completeSessionUseCase,
+		cancelSessionUseCase:   cancelSessionUseCase,
+		activateSessionUseCase: activateSessionUseCase,
 	}
 }
 
@@ -75,4 +84,104 @@ func (h *sessionHandler) GetSessionsHandler(c echo.Context) error {
 	}
 
 	return c.JSON(util.SuccessResponseWithData(sessions))
+}
+
+func (h *sessionHandler) PostCompleteSessionHandler(c echo.Context) error {
+	sessionIDPayload := entity.SessionIDPayload{}
+	if err := (&echo.DefaultBinder{}).BindPathParams(c, &sessionIDPayload); err != nil {
+		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	if err := c.Validate(sessionIDPayload); err != nil {
+		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	medicalRecordPayload := entity.MedicalRecord{}
+	if err := c.Bind(&medicalRecordPayload); err != nil {
+		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	if err := c.Validate(medicalRecordPayload); err != nil {
+		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	requestAuthorizationHeader := c.Request().Header["Authorization"][0]
+	authorizationHeader := entity.AuthorizationHeader{
+		AccessToken: strings.Split(requestAuthorizationHeader, " ")[1],
+	}
+
+	if code, err := h.completeSessionUseCase.Execute(
+		sessionIDPayload,
+		medicalRecordPayload,
+		authorizationHeader,
+	); err != nil {
+		if code != http.StatusInternalServerError {
+			return c.JSON(util.ClientErrorResponse(code, err.Error()))
+		}
+
+		log.Fatal(err)
+		return c.JSON(util.ServerErrorResponse())
+	}
+
+	return c.JSON(util.SuccessResponse())
+}
+
+func (h *sessionHandler) PostCancelSessionHandler(c echo.Context) error {
+	sessionIDPayload := entity.SessionIDPayload{}
+	if err := c.Bind(&sessionIDPayload); err != nil {
+		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	if err := c.Validate(sessionIDPayload); err != nil {
+		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	requestAuthorizationHeader := c.Request().Header["Authorization"][0]
+	authorizationHeader := entity.AuthorizationHeader{
+		AccessToken: strings.Split(requestAuthorizationHeader, " ")[1],
+	}
+
+	if code, err := h.cancelSessionUseCase.Execute(
+		sessionIDPayload,
+		authorizationHeader,
+	); err != nil {
+		if code != http.StatusInternalServerError {
+			return c.JSON(util.ClientErrorResponse(code, err.Error()))
+		}
+
+		log.Fatal(err)
+		return c.JSON(util.ServerErrorResponse())
+	}
+
+	return c.JSON(util.SuccessResponse())
+}
+
+func (h *sessionHandler) PostActivateSessionHandler(c echo.Context) error {
+	sessionIDPayload := entity.SessionIDPayload{}
+	if err := c.Bind(&sessionIDPayload); err != nil {
+		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	if err := c.Validate(sessionIDPayload); err != nil {
+		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
+	}
+
+	requestAuthorizationHeader := c.Request().Header["Authorization"][0]
+	authorizationHeader := entity.AuthorizationHeader{
+		AccessToken: strings.Split(requestAuthorizationHeader, " ")[1],
+	}
+
+	if code, err := h.activateSessionUseCase.Execute(
+		sessionIDPayload,
+		authorizationHeader,
+	); err != nil {
+		if code != http.StatusInternalServerError {
+			return c.JSON(util.ClientErrorResponse(code, err.Error()))
+		}
+
+		log.Fatal(err)
+		return c.JSON(util.ServerErrorResponse())
+	}
+
+	return c.JSON(util.SuccessResponse())
 }

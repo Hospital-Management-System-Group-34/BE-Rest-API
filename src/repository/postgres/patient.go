@@ -19,14 +19,18 @@ func NewPatientRepository(db *gorm.DB) domain.PatientRepository {
 	}
 }
 
-func (r *patientRepository) AddPatient(payload entity.Patient) (int, error) {
+func (r *patientRepository) AddPatient(payload entity.Patient) (entity.AddedPatient, int, error) {
 	result := r.db.Create(&payload)
 
 	if result.RowsAffected == 0 {
-		return http.StatusInternalServerError, result.Error
+		return entity.AddedPatient{}, http.StatusInternalServerError, result.Error
 	}
 
-	return http.StatusOK, nil
+	addedPatient := entity.AddedPatient{
+		ID: payload.ID,
+	}
+
+	return addedPatient, http.StatusOK, nil
 }
 
 func (r *patientRepository) GetPatients() ([]entity.Patient, int, error) {

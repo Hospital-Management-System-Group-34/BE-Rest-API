@@ -20,3 +20,7 @@ type Session struct {
 type GetSessionParams struct {
 	Status string `query:"status"`
 }
+
+type SessionIDPayload struct {
+	ID string `param:"sessionID"`
+}

@@ -101,3 +101,49 @@ func (r *sessionRepository) GetCancelledSessionsByDoctorID(doctorID string) ([]e
 
 	return sessions, http.StatusOK, nil
 }
+
+func (r *sessionRepository) UpdateSessionStatusToCompleted(id string) (int, error) {
+	session, code, err := r.GetSessionByID(id)
+	if err != nil {
+		return code, err
+	}
+	session.Status = "Selesai"
+
+	r.db.Save(&session)
+
+	return http.StatusOK, nil
+}
+
+func (r *sessionRepository) UpdateSessionStatusToCancelled(id string) (int, error) {
+	session, code, err := r.GetSessionByID(id)
+	if err != nil {
+		return code, err
+	}
+	session.Status = "Dibatalkan"
+
+	r.db.Save(&session)
+
+	return http.StatusOK, nil
+}
+
+func (r *sessionRepository) UpdateSessionStatusToActive(id string) (int, error) {
+	session, code, err := r.GetSessionByID(id)
+	if err != nil {
+		return code, err
+	}
+	session.Status = "Sedang berlangsung"
+
+	r.db.Save(&session)
+
+	return http.StatusOK, nil
+}
+
+func (r *sessionRepository) VerifyNoActiveSession() (int, error) {
+	result := r.db.Where("status = ?", "Sedang berlangsung").Find(&entity.Session{})
+
+	if result.RowsAffected > 0 {
+		return http.StatusBadRequest, fmt.Errorf("there is an active session. complete it first")
+	}
+
+	return http.StatusOK, nil
+}
