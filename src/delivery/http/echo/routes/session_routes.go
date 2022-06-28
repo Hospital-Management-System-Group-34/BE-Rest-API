@@ -19,6 +19,7 @@ func SessionRoutes(e *echo.Echo) {
 	userRepository := repository.NewUserRepository(postgresDB)
 	clinicRepository := repository.NewClinicRepository(postgresDB)
 	scheduleRepository := repository.NewScheduleRepository(postgresDB)
+	medicalRecordRepository := repository.NewMedicalRecordRepository(postgresDB)
 
 	nanoidIDGenerator := nanoid.NewNanoidIDGenerator()
 	jwtTokenManager := jwt.NewJWTTokenManager()
@@ -36,12 +37,35 @@ func SessionRoutes(e *echo.Echo) {
 		userRepository,
 		jwtTokenManager,
 	)
+	completeSessionUseCase := session.NewCompleteSessionUseCase(
+		sessionRepository,
+		userRepository,
+		jwtTokenManager,
+		medicalRecordRepository,
+		patientRepository,
+	)
+	cancelSessionUseCase := session.NewCancelSessionUseCase(
+		sessionRepository,
+		userRepository,
+		jwtTokenManager,
+	)
+	activateSessionUseCase := session.NewActivateSessionUseCase(
+		sessionRepository,
+		userRepository,
+		jwtTokenManager,
+	)
 
 	sessionHandler := handler.NewSessionHandler(
 		addSessionUseCase,
 		getSessionsUseCase,
+		completeSessionUseCase,
+		cancelSessionUseCase,
+		activateSessionUseCase,
 	)
 
 	e.POST("/sessions", sessionHandler.PostSessionHandler, middleware.JWTMiddleware())
 	e.GET("/sessions", sessionHandler.GetSessionsHandler, middleware.JWTMiddleware())
+	e.POST("/sessions/:sessionID/complete", sessionHandler.PostCompleteSessionHandler, middleware.JWTMiddleware())
+	e.POST("/sessions/:sessionID/cancel", sessionHandler.PostCancelSessionHandler, middleware.JWTMiddleware())
+	e.POST("/sessions/:sessionID/activate", sessionHandler.PostActivateSessionHandler, middleware.JWTMiddleware())
 }

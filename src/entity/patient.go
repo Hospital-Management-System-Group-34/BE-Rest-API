@@ -31,3 +31,7 @@ type PatientIDPayload struct {
 type PatientNIKPayload struct {
 	NIK string `param:"nik" validate:"required"`
 }
+
+type AddedPatient struct {
+	ID string `json:"id"`
+}

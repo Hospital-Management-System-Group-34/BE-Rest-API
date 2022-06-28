@@ -47,7 +47,7 @@ func (h *patientHandler) PostPatientHandler(c echo.Context) error {
 		return c.JSON(util.ClientErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
-	code, err := h.addPatientUseCase.Execute(payload)
+	patient, code, err := h.addPatientUseCase.Execute(payload)
 	if err != nil {
 		if code != http.StatusInternalServerError {
 			return c.JSON(util.ClientErrorResponse(code, err.Error()))
@@ -57,7 +57,9 @@ func (h *patientHandler) PostPatientHandler(c echo.Context) error {
 		return c.JSON(util.ServerErrorResponse())
 	}
 
-	return c.JSON(util.SuccessResponse())
+	return c.JSON(util.SuccessResponseWithData(map[string]interface{}{
+		"patient": patient,
+	}))
 }
 
 func (h *patientHandler) GetPatientsHandler(c echo.Context) error {

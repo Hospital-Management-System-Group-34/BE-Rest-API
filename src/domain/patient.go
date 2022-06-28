@@ -15,7 +15,7 @@ type PatientHandler interface {
 }
 
 type PatientRepository interface {
-	AddPatient(payload entity.Patient) (int, error)
+	AddPatient(payload entity.Patient) (entity.AddedPatient, int, error)
 	GetPatients() ([]entity.Patient, int, error)
 	GetPatientByID(id string) (entity.Patient, int, error)
 	UpdatePatientByID(payload entity.UpdatePatientPayload) (int, error)
@@ -26,7 +26,7 @@ type PatientRepository interface {
 }
 
 type AddPatientUseCase interface {
-	Execute(payload entity.Patient) (int, error)
+	Execute(payload entity.Patient) (entity.AddedPatient, int, error)
 }
 
 type GetPatientsUseCase interface {

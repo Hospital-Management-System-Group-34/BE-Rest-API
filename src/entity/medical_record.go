@@ -5,7 +5,7 @@ import "time"
 type MedicalRecord struct {
 	ID                   string    `gorm:"not null" json:"id"`
 	SessionID            *string   `gorm:"not null" param:"sessionID" json:"sessionID" validate:"required"`
-	PatientMedicalRecord *string   `gorm:"not null" json:"patientMedicalRecord" validate:"required"`
+	PatientMedicalRecord *string   `gorm:"not null" json:"patientMedicalRecord"`
 	Type                 string    `gorm:"not null" json:"type" validate:"required"`
 	History              string    `gorm:"not null" json:"history" validate:"required"`
 	Diagnosis            string    `gorm:"not null" json:"diagnosis" validate:"required"`
