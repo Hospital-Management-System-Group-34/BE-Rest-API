@@ -5,10 +5,13 @@ import (
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/delivery/http/echo/validator"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func CreateServer() *echo.Echo {
 	e := echo.New()
+
+	e.Use(middleware.CORS())
 
 	routes.UserRoutes(e)
 	routes.AuthenticationRoutes(e)
