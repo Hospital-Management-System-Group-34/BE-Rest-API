@@ -17,7 +17,7 @@ jobs:
         image: postgres
         env:
           POSTGRES_USER: root
-          POSTGRES_PASSWORD: toor
+          POSTGRES_PASSWORD: root
           POSTGRES_DB: simars
         options: >-
           --health-cmd pg_isready
