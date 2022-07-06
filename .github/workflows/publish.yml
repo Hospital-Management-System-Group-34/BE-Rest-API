@@ -20,5 +20,6 @@ jobs:
         script: |
           cd ~/BE-Rest-API
           git pull origin main
+          docker network create capstone-alta
           docker-compose down
           docker-compose up --build -d
