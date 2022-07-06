@@ -33,6 +33,8 @@ func init() {
 	util.InitDays()
 	util.InitSchedules()
 	util.InitTimes()
+	util.InitPatients()
+	util.InitSessions()
 }
 
 func main() {
