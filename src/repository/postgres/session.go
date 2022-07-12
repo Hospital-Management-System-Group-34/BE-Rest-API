@@ -6,6 +6,7 @@ import (
 
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/domain"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/entity"
+	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/util"
 	"gorm.io/gorm"
 )
 
@@ -30,7 +31,7 @@ func (r *sessionRepository) AddSession(payload entity.Session) (entity.Session, 
 }
 
 func (r *sessionRepository) GetSessionLastQueue(scheduleID string, date string) (int, int, error) {
-	lastQueue := 0
+	lastQueue := util.NewIntReference(0)
 
 	result := r.db.Find(&entity.Session{})
 	if result.RowsAffected != 0 {
@@ -46,7 +47,11 @@ func (r *sessionRepository) GetSessionLastQueue(scheduleID string, date string) 
 		return -1, http.StatusInternalServerError, result.Error
 	}
 
-	return lastQueue, http.StatusOK, nil
+	if lastQueue == nil {
+		lastQueue = util.NewIntReference(0)
+	}
+
+	return *lastQueue, http.StatusOK, nil
 }
 
 func (r *sessionRepository) GetSessionByID(id string) (entity.Session, int, error) {
