@@ -9,6 +9,8 @@ type MedicalRecord struct {
 	Type                 string    `gorm:"not null" json:"type" validate:"required"`
 	History              string    `gorm:"not null" json:"history" validate:"required"`
 	Diagnosis            string    `gorm:"not null" json:"diagnosis" validate:"required"`
+	DrugAllergyHistory   string    `gorm:"not null" json:"drugAllergyHistory" validate:"required"`
+	DrugTherapy          string    `gorm:"not null" json:"drugTherapy" validate:"required"`
 	Height               string    `gorm:"not null" json:"height" validate:"required,number,gt=0"`
 	Weight               string    `gorm:"not null" json:"weight" validate:"required,number,gt=0"`
 	Systole              string    `gorm:"not null" json:"systole" validate:"required,number,gt=0"`

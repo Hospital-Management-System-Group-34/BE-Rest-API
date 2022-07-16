@@ -10,6 +10,7 @@ type UserHandler interface {
 	PutUserAvatarHandler(c echo.Context) error
 	DeleteUserAvatarHandler(c echo.Context) error
 	GetUserByIDHandler(c echo.Context) error
+	GetAuthenticatedUserHandler(c echo.Context) error
 }
 
 type UserRepository interface {
@@ -46,4 +47,8 @@ type GetUserByIDUseCase interface {
 
 type GetUserDoctorByIDUseCase interface {
 	Execute(payload entity.UserIDPayload) (entity.User, int, error)
+}
+
+type GetAuthenticatedUserUseCase interface {
+	Execute(authorizationHeader entity.AuthorizationHeader) (entity.User, int, error)
 }

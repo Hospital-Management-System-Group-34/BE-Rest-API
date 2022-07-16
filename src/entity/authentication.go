@@ -11,6 +11,7 @@ type RefreshTokenPayload struct {
 type NewLogin struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
+	UserName     string `json:"userName"`
 }
 
 type NewAccessToken struct {

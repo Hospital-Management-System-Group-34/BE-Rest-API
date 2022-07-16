@@ -13,11 +13,12 @@ import (
 )
 
 type userHandler struct {
-	addUserUseCase           domain.AddUserUseCase
-	updateUserAvatarUseCase  domain.UpdateUserAvatarUseCase
-	deleteUserAvatarUseCase  domain.DeleteUserAvatarUseCase
-	getUserByIDUseCase       domain.GetUserByIDUseCase
-	getUserDoctorByIDUseCase domain.GetUserDoctorByIDUseCase
+	addUserUseCase              domain.AddUserUseCase
+	updateUserAvatarUseCase     domain.UpdateUserAvatarUseCase
+	deleteUserAvatarUseCase     domain.DeleteUserAvatarUseCase
+	getUserByIDUseCase          domain.GetUserByIDUseCase
+	getUserDoctorByIDUseCase    domain.GetUserDoctorByIDUseCase
+	getAuthenticatedUserUseCase domain.GetAuthenticatedUserUseCase
 }
 
 func NewUserHandler(
@@ -26,13 +27,15 @@ func NewUserHandler(
 	deleteUserAvatarUseCase domain.DeleteUserAvatarUseCase,
 	getUserByIDUseCase domain.GetUserByIDUseCase,
 	getUserDoctorByIDUseCase domain.GetUserDoctorByIDUseCase,
+	getAuthenticatedUserUseCase domain.GetAuthenticatedUserUseCase,
 ) domain.UserHandler {
 	return &userHandler{
-		addUserUseCase:           addUserUseCase,
-		updateUserAvatarUseCase:  updateUserAvatarUseCase,
-		deleteUserAvatarUseCase:  deleteUserAvatarUseCase,
-		getUserByIDUseCase:       getUserByIDUseCase,
-		getUserDoctorByIDUseCase: getUserDoctorByIDUseCase,
+		addUserUseCase:              addUserUseCase,
+		updateUserAvatarUseCase:     updateUserAvatarUseCase,
+		deleteUserAvatarUseCase:     deleteUserAvatarUseCase,
+		getUserByIDUseCase:          getUserByIDUseCase,
+		getUserDoctorByIDUseCase:    getUserDoctorByIDUseCase,
+		getAuthenticatedUserUseCase: getAuthenticatedUserUseCase,
 	}
 }
 
@@ -141,6 +144,27 @@ func (h *userHandler) GetUserByIDHandler(c echo.Context) error {
 	}
 
 	user, code, err := h.getUserDoctorByIDUseCase.Execute(payload)
+	if err != nil {
+		if code != http.StatusInternalServerError {
+			return c.JSON(util.ClientErrorResponse(code, err.Error()))
+		}
+
+		log.Fatal(err)
+		return c.JSON(util.ServerErrorResponse())
+	}
+
+	return c.JSON(util.SuccessResponseWithData(map[string]interface{}{
+		"user": user,
+	}))
+}
+
+func (h *userHandler) GetAuthenticatedUserHandler(c echo.Context) error {
+	requestAuthorizationHeader := c.Request().Header["Authorization"][0]
+	authorizationHeader := entity.AuthorizationHeader{
+		AccessToken: strings.Split(requestAuthorizationHeader, " ")[1],
+	}
+
+	user, code, err := h.getAuthenticatedUserUseCase.Execute(authorizationHeader)
 	if err != nil {
 		if code != http.StatusInternalServerError {
 			return c.JSON(util.ClientErrorResponse(code, err.Error()))
