@@ -64,6 +64,7 @@ func (u *userLoginUseCase) Execute(payload entity.LoginPayload) (entity.NewLogin
 	newLogin := entity.NewLogin{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		UserName:     user.Name,
 	}
 
 	return newLogin, http.StatusOK, nil

@@ -41,6 +41,10 @@ func UserRoutes(e *echo.Echo) {
 		timeRepository,
 		clinicRepository,
 	)
+	getAuthenticatedUserUseCase := user.NewGetAuthenticatedUserUseCase(
+		userRepository,
+		jwtTokenManager,
+	)
 
 	userHandler := handler.NewUserHandler(
 		addUserUseCase,
@@ -48,10 +52,12 @@ func UserRoutes(e *echo.Echo) {
 		deleteUserAvatarUseCase,
 		getUserByIDUseCase,
 		getUserDoctorByIDUseCase,
+		getAuthenticatedUserUseCase,
 	)
 
 	e.POST("/users", userHandler.PostUserHandler, middleware.JWTMiddleware())
 	e.PUT("/users/:userID/avatar", userHandler.PutUserAvatarHandler, middleware.JWTMiddleware())
 	e.DELETE("/users/:userID/avatar", userHandler.DeleteUserAvatarHandler, middleware.JWTMiddleware())
 	e.GET("/users/:userID", userHandler.GetUserByIDHandler, middleware.JWTMiddleware())
+	e.GET("/users/current", userHandler.GetAuthenticatedUserHandler, middleware.JWTMiddleware())
 }
