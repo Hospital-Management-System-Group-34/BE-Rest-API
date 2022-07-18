@@ -10,20 +10,23 @@ import (
 )
 
 type addClinicUseCase struct {
-	clinicRepository domain.ClinicRepository
-	jwtTokenManager  application.TokenManager
-	userRepository   domain.UserRepository
+	clinicRepository  domain.ClinicRepository
+	jwtTokenManager   application.TokenManager
+	userRepository    domain.UserRepository
+	nanoidIDGenerator application.IDGenerator
 }
 
 func NewAddClinicUseCase(
 	clinicRepository domain.ClinicRepository,
 	jwtTokenManager application.TokenManager,
 	userRepository domain.UserRepository,
+	nanoidIDGenerator application.IDGenerator,
 ) domain.AddClinicUseCase {
 	return &addClinicUseCase{
-		clinicRepository: clinicRepository,
-		jwtTokenManager:  jwtTokenManager,
-		userRepository:   userRepository,
+		clinicRepository:  clinicRepository,
+		jwtTokenManager:   jwtTokenManager,
+		userRepository:    userRepository,
+		nanoidIDGenerator: nanoidIDGenerator,
 	}
 }
 
@@ -44,6 +47,12 @@ func (u *addClinicUseCase) Execute(
 	if user.Role != "Admin" {
 		return http.StatusForbidden, fmt.Errorf("restricted resource")
 	}
+
+	generatedID, code, err := u.nanoidIDGenerator.Generate()
+	if err != nil {
+		return code, err
+	}
+	payload.ID = fmt.Sprintf("medical-record-%s", generatedID)
 
 	return u.clinicRepository.AddClinic(payload)
 }

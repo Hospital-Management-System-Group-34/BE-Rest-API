@@ -13,17 +13,20 @@ type addScheduleUseCase struct {
 	scheduleRepository domain.ScheduleRepository
 	userRepository     domain.UserRepository
 	jwtTokenManager    application.TokenManager
+	nanoidIDGenerator  application.IDGenerator
 }
 
 func NewAddScheduleUseCase(
 	scheduleRepository domain.ScheduleRepository,
 	userRepository domain.UserRepository,
 	jwtTokenManager application.TokenManager,
+	nanoidIDGenerator application.IDGenerator,
 ) domain.AddScheduleUseCase {
 	return &addScheduleUseCase{
 		scheduleRepository: scheduleRepository,
 		userRepository:     userRepository,
 		jwtTokenManager:    jwtTokenManager,
+		nanoidIDGenerator:  nanoidIDGenerator,
 	}
 }
 
@@ -46,6 +49,12 @@ func (u *addScheduleUseCase) Execute(
 			return http.StatusForbidden, fmt.Errorf("restricted resource")
 		}
 	}
+
+	generatedID, code, err := u.nanoidIDGenerator.Generate()
+	if err != nil {
+		return code, err
+	}
+	payload.ID = fmt.Sprintf("medical-record-%s", generatedID)
 
 	return u.scheduleRepository.AddSchedule(payload)
 }
