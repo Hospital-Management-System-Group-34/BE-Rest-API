@@ -5,6 +5,7 @@ import (
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/delivery/http/echo/middleware"
 	repository "github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/repository/postgres"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/service/jwt"
+	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/service/nanoid"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/service/postgres"
 	"github.com/Hospital-Management-System-Group-34/BE-Rest-API/src/usecase/clinic"
 	"github.com/labstack/echo/v4"
@@ -14,10 +15,17 @@ func ClinicRoutes(e *echo.Echo) {
 	postgresDB := postgres.Connect()
 
 	clinicRepository := repository.NewClinicRepository(postgresDB)
-	jwtTokenManager := jwt.NewJWTTokenManager()
 	userRepository := repository.NewUserRepository(postgresDB)
 
-	addClinicUseCase := clinic.NewAddClinicUseCase(clinicRepository, jwtTokenManager, userRepository)
+	jwtTokenManager := jwt.NewJWTTokenManager()
+	nanoidIDGenerator := nanoid.NewNanoidIDGenerator()
+
+	addClinicUseCase := clinic.NewAddClinicUseCase(
+		clinicRepository,
+		jwtTokenManager,
+		userRepository,
+		nanoidIDGenerator,
+	)
 	getClinicsUseCase := clinic.NewGetClinicsUseCase(clinicRepository)
 	getClinicByIDUseCase := clinic.NewGetClinicByIDUseCase(clinicRepository, userRepository)
 	updateClinicByIDUseCase := clinic.NewUpdateClinicByIDUseCase(
