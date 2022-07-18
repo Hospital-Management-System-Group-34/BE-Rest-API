@@ -43,6 +43,7 @@ func SessionRoutes(e *echo.Echo) {
 		jwtTokenManager,
 		medicalRecordRepository,
 		patientRepository,
+		nanoidIDGenerator,
 	)
 	cancelSessionUseCase := session.NewCancelSessionUseCase(
 		sessionRepository,
