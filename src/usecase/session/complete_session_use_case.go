@@ -15,6 +15,7 @@ type completeSessionUseCase struct {
 	jwtTokenManager         application.TokenManager
 	medicalRecordRepository domain.MedicalRecordRepository
 	patientRepository       domain.PatientRepository
+	nanoidIDGenerator       application.IDGenerator
 }
 
 func NewCompleteSessionUseCase(
@@ -23,6 +24,7 @@ func NewCompleteSessionUseCase(
 	jwtTokenManager application.TokenManager,
 	medicalRecordRepository domain.MedicalRecordRepository,
 	patientRepository domain.PatientRepository,
+	nanoidIDGenerator application.IDGenerator,
 ) domain.CompleteSessionUseCase {
 	return &completeSessionUseCase{
 		sessionRepository:       sessionRepository,
@@ -30,6 +32,7 @@ func NewCompleteSessionUseCase(
 		jwtTokenManager:         jwtTokenManager,
 		medicalRecordRepository: medicalRecordRepository,
 		patientRepository:       patientRepository,
+		nanoidIDGenerator:       nanoidIDGenerator,
 	}
 }
 
@@ -68,6 +71,12 @@ func (u *completeSessionUseCase) Execute(
 		return code, err
 	}
 	medicalRecordPayload.PatientMedicalRecord = &patient.MedicalRecord
+
+	generatedID, code, err := u.nanoidIDGenerator.Generate()
+	if err != nil {
+		return code, err
+	}
+	medicalRecordPayload.ID = fmt.Sprintf("medical-record-%s", generatedID)
 
 	if code, err := u.medicalRecordRepository.AddMedicalRecord(medicalRecordPayload); err != nil {
 		return code, err
